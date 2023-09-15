@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-storage
+    environment:
+      MYSQL_DATABASE: storage_db
+      MYSQL_ROOT_PASSWORD: 1111
+    ports:
+      - "3307:3307"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  spring-boot-app:
+    build: .
+    container_name: spring-boot-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/storage_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1111
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
