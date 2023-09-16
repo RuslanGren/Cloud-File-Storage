@@ -20,10 +20,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/api/user/register").permitAll()
-                        .anyRequest().permitAll())
+                        .requestMatchers("/", "/register").permitAll()
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/")
+                        .failureUrl("/register")
                         .permitAll())
                 .logout(LogoutConfigurer::permitAll)
                 .httpBasic(Customizer.withDefaults());

@@ -13,12 +13,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity register(UserEntity userEntity) {
+    public void register(UserEntity userEntity) {
         if (userRepository.findByUsername(userEntity.getUsername()).isPresent()) {
             throw new CustomBadRequestException("User exist!");
         }
 
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        return userRepository.save(userEntity);
+        userRepository.save(userEntity);
     }
 }
