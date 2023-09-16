@@ -24,8 +24,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/")
-                        .failureUrl("/register")
+                        .defaultSuccessUrl("/main")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/")
                         .permitAll())
                 .logout(LogoutConfigurer::permitAll)
                 .httpBasic(Customizer.withDefaults());
