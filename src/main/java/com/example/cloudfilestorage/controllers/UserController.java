@@ -13,7 +13,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@ModelAttribute("user") UserEntity userEntity) {
+    public ResponseEntity<?> register(@RequestBody UserEntity userEntity) {
         return ResponseEntity.ok(userService.register(userEntity));
     }
 }
