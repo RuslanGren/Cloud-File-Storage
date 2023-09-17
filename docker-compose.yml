@@ -1,28 +1,29 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:latest
-    container_name: mysql-storage
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres-container
     environment:
-      MYSQL_DATABASE: storage_db
-      MYSQL_ROOT_PASSWORD: 1111
+      POSTGRES_DB: storage
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123123
     ports:
-      - "3307:3307"
+      - "5432:5432"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
 
   spring-boot-app:
     build: .
-    container_name: spring-boot-app
+    container_name: spring-boot-container
     ports:
-      - "8080:8080"
+      - "4308:4308"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/storage_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 1111
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/storage
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123123
     depends_on:
-      - mysql
+      - postgres
 
 volumes:
-  mysql-data:
+  postgres-data:
