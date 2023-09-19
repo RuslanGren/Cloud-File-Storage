@@ -1,7 +1,7 @@
 package com.example.cloudfilestorage;
 
-import com.example.cloudfilestorage.entity.UserEntity;
-import com.example.cloudfilestorage.exceptions.CustomBadRequestException;
+import com.example.cloudfilestorage.domain.user.User;
+import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.repository.UserRepository;
 import com.example.cloudfilestorage.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class RegisterTest {
 
     @Test
     public void testRegisterNewUser() {
-        UserEntity newUser = new UserEntity();
+        User newUser = new User();
         newUser.setUsername("testuser");
         newUser.setPassword("password");
 
@@ -39,7 +39,7 @@ public class RegisterTest {
 
     @Test
     public void testRegisterExistingUser() {
-        UserEntity existingUser = new UserEntity();
+        User existingUser = new User();
         existingUser.setUsername("testuser");
         existingUser.setPassword("password");
 

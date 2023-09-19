@@ -1,7 +1,7 @@
 package com.example.cloudfilestorage.config;
 
-import com.example.cloudfilestorage.entity.UserEntity;
-import com.example.cloudfilestorage.exceptions.UserNotFoundException;
+import com.example.cloudfilestorage.domain.user.User;
+import com.example.cloudfilestorage.domain.exceptions.UserNotFoundException;
 import com.example.cloudfilestorage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,8 +16,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
-        return new UserInfo(userEntity);
+        return new UserInfo(user);
     }
 }

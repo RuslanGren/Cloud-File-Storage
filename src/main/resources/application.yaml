@@ -1,0 +1,4 @@
+springdoc:
+  override-with-generic-response: false
+
+minio:

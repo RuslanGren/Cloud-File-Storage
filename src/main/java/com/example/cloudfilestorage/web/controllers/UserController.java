@@ -1,8 +1,9 @@
-package com.example.cloudfilestorage.controllers;
+package com.example.cloudfilestorage.web.controllers;
 
-import com.example.cloudfilestorage.entity.UserEntity;
-import com.example.cloudfilestorage.exceptions.CustomBadRequestException;
+import com.example.cloudfilestorage.domain.user.User;
+import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.services.UserService;
+import com.example.cloudfilestorage.web.user.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -32,25 +33,20 @@ public class UserController {
 
     @GetMapping("/register")
     public String displayRegisterPage(Model model) {
-        model.addAttribute("user", new UserEntity());
+        model.addAttribute("user", new User());
         return "register";
     }
 
     @PostMapping("/register")
-    public String registerNewUser(@ModelAttribute("user") @Valid UserEntity userEntity,
+    public String registerNewUser(@ModelAttribute("user") @Valid UserDto user,
                            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            // if there are errors in the form, redisplay the registration page
             return "register";
         }
-
         try {
-            // attempt to register new user
-            userService.register(userEntity);
-            // if successful redirect to the index page
+            userService.create(user);
             return "redirect:/main";
         } catch (CustomBadRequestException e) {
-            // if registration fails redisplay the registration page with error message
             model.addAttribute("error", e.getMessage());
             return "register";
         }

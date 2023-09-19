@@ -1,6 +1,6 @@
 package com.example.cloudfilestorage.config;
 
-import com.example.cloudfilestorage.entity.UserEntity;
+import com.example.cloudfilestorage.domain.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,10 +9,10 @@ import java.util.Collections;
 
 public class UserInfo implements UserDetails {
 
-    private final UserEntity userEntity;
+    private final User user;
 
-    public UserInfo(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public UserInfo(User user) {
+        this.user = user;
     }
 
     @Override
@@ -22,12 +22,12 @@ public class UserInfo implements UserDetails {
 
     @Override
     public String getPassword() {
-        return userEntity.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return userEntity.getUsername();
+        return user.getUsername();
     }
 
     @Override

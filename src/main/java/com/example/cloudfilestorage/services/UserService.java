@@ -1,24 +1,15 @@
 package com.example.cloudfilestorage.services;
 
-import com.example.cloudfilestorage.entity.UserEntity;
-import com.example.cloudfilestorage.exceptions.CustomBadRequestException;
-import com.example.cloudfilestorage.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import com.example.cloudfilestorage.domain.user.User;
+import com.example.cloudfilestorage.web.user.UserDto;
 
-@RequiredArgsConstructor
-@Service
-public class  UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+public interface UserService {
 
-    public void register(UserEntity userEntity) {
-        if (userRepository.findByUsername(userEntity.getUsername()).isPresent()) {
-            throw new CustomBadRequestException("User exist!");
-        }
+    User getById(Long id);
 
-        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        userRepository.save(userEntity);
-    }
+    User getByUsername(String username);
+
+    User create(UserDto user);
+
+    void delete(Long id);
 }
