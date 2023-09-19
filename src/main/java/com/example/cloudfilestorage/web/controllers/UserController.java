@@ -38,13 +38,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerNewUser(@ModelAttribute("user") @Valid UserDto user,
+    public String registerNewUser(@ModelAttribute("user") @Valid UserDto userDto,
                            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "register";
         }
         try {
-            userService.create(user);
+            userService.create(userDto);
             return "redirect:/main";
         } catch (CustomBadRequestException e) {
             model.addAttribute("error", e.getMessage());

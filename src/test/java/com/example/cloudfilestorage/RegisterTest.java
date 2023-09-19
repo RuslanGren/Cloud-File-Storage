@@ -4,6 +4,8 @@ import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.repository.UserRepository;
 import com.example.cloudfilestorage.services.UserService;
+import com.example.cloudfilestorage.web.mappers.UserMapper;
+import com.example.cloudfilestorage.web.user.UserDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,30 +23,34 @@ public class RegisterTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @MockBean
     private UserRepository userRepository;
 
     @Test
     public void testRegisterNewUser() {
-        User newUser = new User();
+        UserDto newUser = new UserDto();
         newUser.setUsername("testuser");
         newUser.setPassword("password");
 
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
 
-        userService.register(newUser);
+        User user = userService.create(newUser);
 
-        verify(userRepository).save(newUser);
+        verify(userRepository).save(user);
     }
 
     @Test
     public void testRegisterExistingUser() {
-        User existingUser = new User();
+        UserDto existingUser = new UserDto();
         existingUser.setUsername("testuser");
         existingUser.setPassword("password");
 
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(existingUser));
+        User user = userMapper.toEntity(existingUser);
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
-        assertThrows(CustomBadRequestException.class, () -> userService.register(existingUser));
+        assertThrows(CustomBadRequestException.class, () -> userService.create(existingUser));
     }
 }

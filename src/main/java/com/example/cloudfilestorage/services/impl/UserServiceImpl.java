@@ -5,6 +5,7 @@ import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.repository.UserRepository;
 import com.example.cloudfilestorage.services.UserService;
+import com.example.cloudfilestorage.web.mappers.UserMapper;
 import com.example.cloudfilestorage.web.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ public class  UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -35,13 +37,11 @@ public class  UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User create(UserDto userDto) {
-        if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
+        User user = userMapper.toEntity(userDto);
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new CustomBadRequestException("User already exists");
         }
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user;
     }
