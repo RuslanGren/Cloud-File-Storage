@@ -3,7 +3,7 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Authenticated_</title>
+    <title>Authenticated</title>
 </head>
 <body>
 <h1>Authenticated</h1>
@@ -11,5 +11,8 @@ Authenticated as <span sec:authentication="name"></span>
 <form method="post" th:action="@{/logout}">
     <button type="submit">Sign out</button>
 </form>
+<br>
+<label for="input">Choose a picture:</label>
+<input type="file" id="input" name="avatar" accept="image/png, image/jpeg" />
 </body>
 </html>
