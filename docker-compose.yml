@@ -5,9 +5,9 @@ services:
     image: postgres:latest
     container_name: my-postgres-container
     environment:
-      POSTGRES_DB: storage
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123123
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -36,9 +36,9 @@ services:
     ports:
       - "4308:4308"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/storage
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 123123
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - postgres
 
