@@ -1,9 +1,9 @@
 package com.example.cloudfilestorage.services.impl;
 
-import com.example.cloudfilestorage.domain.File;
-import com.example.cloudfilestorage.domain.exceptions.ImageUploadException;
+import com.example.cloudfilestorage.domain.file.File;
+import com.example.cloudfilestorage.domain.exceptions.FileUploadException;
 import com.example.cloudfilestorage.repository.FileRepository;
-import com.example.cloudfilestorage.services.ImageService;
+import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.properties.MinioProperties;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ImageServiceImpl implements ImageService {
+public class FileServiceImpl implements FileService {
 
     private final MinioClient minioClient;
     private final MinioProperties minioProperties;
@@ -35,22 +35,22 @@ public class ImageServiceImpl implements ImageService {
         try {
             createBucket();
         } catch (Exception e) {
-            throw new ImageUploadException("Image upload failed " + e.getMessage());
+            throw new FileUploadException("Image upload failed " + e.getMessage());
         }
         if (file.isEmpty() || file.getOriginalFilename() == null) {
-            throw new ImageUploadException("Image must have name");
+            throw new FileUploadException("Image must have name");
         }
         String fileName = file.getOriginalFilename();
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
         } catch (Exception e) {
-            throw new ImageUploadException("Image upload failed " + e.getMessage());
+            throw new FileUploadException("Image upload failed " + e.getMessage());
         }
         saveImage(inputStream, fileName);
         File thisFile = File.builder()
                 .name(fileName)
-                .url(minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + fileName)
+                .url("http://localhost:9000/" + minioProperties.getBucket() + "/" + fileName)
                 .build();
         fileRepository.save(thisFile);
     }

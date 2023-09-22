@@ -2,7 +2,7 @@ package com.example.cloudfilestorage.web.controllers;
 
 import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
-import com.example.cloudfilestorage.services.ImageService;
+import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.user.UserDto;
 import jakarta.validation.Valid;
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final ImageService imageService;
+    private final FileService fileService;
 
     @GetMapping("/")
     public String displayIndexPage() {
@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping("/main")
     public String displayMainPage(Model model) {
-        model.addAttribute("files", imageService.getAll());
+        model.addAttribute("files", fileService.getAll());
         return "main";
     }
 
@@ -61,7 +61,7 @@ public class UserController {
     public String uploadImage(@RequestParam("file") MultipartFile file,
                               RedirectAttributes redirectAttributes) {
         try {
-            imageService.upload(file);
+            fileService.upload(file);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }

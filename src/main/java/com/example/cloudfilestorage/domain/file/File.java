@@ -1,4 +1,4 @@
-package com.example.cloudfilestorage.domain;
+package com.example.cloudfilestorage.domain.file;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

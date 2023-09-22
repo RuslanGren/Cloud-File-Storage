@@ -22,7 +22,7 @@ Authenticated as <span sec:authentication="name"></span>
 </form>
 <br>
 <div th:each="file : ${files}">
-<p>name: <span th:text="${file.getName()}" th:href="${file.getUrl()}"></span></p>
+<p>name: <a th:href="${file.getUrl()}" th:text="${file.getName()}" download></a></p>
 </div>
 </body>
 </html>
