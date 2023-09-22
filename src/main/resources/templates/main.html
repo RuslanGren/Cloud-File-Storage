@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Authenticated</title>
+    <style>
+        .file {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
 <h1>Authenticated</h1>
@@ -22,7 +28,7 @@ Authenticated as <span sec:authentication="name"></span>
 </form>
 <br>
 <div th:each="file : ${files}">
-<p>name: <a th:href="${file.getUrl()}" th:text="${file.getName()}" download></a></p>
+    <p class="file">name: <a th:href="@{/{id}/show(id=${file.getId()})}" th:text="${file.getName()}">text</a></p>
 </div>
 </body>
 </html>

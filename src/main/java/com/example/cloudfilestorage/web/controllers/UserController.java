@@ -67,4 +67,16 @@ public class UserController {
         }
         return "redirect:/main";
     }
+
+    @GetMapping("/{id}/show")
+    public String getFileById(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("file", fileService.getById(id));
+        return "file";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteFileById(@PathVariable("id") Long id) {
+        fileService.deleteFileById(id);
+        return "redirect:/main";
+    }
 }

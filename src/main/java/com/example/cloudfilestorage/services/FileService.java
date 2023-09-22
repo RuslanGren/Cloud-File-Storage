@@ -9,5 +9,9 @@ public interface FileService {
 
     void upload(MultipartFile multipartFile);
 
+    File getById(Long id);
+
     List<File> getAll();
+
+    void deleteFileById(Long id);
 }

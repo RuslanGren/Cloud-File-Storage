@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${file.getName()}"></title>
+</head>
+<body>
+<p>name: <a th:href="${file.getUrl()}" th:text="${file.getName()}" download>text</a></p>
+<a th:href="${file.getUrl()}">Download</a>
+<br><br>
+<form th:method="post" th:action="@{/{id}/delete(id=${file.getId()})}">
+    <input type="submit" value="Delete">
+</form>
+</body>
+</html>
