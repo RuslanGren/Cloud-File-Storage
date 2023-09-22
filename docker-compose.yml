@@ -15,10 +15,10 @@ services:
 
   minio:
     image: minio/minio:latest
-    command: server --console-address ":9001" /data/
+    command: server --console-address ":9090" /data/
     ports:
+      - "9090:9090"
       - "9000:9000"
-      - "9001:9001"
     environment:
       - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
       - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
@@ -32,10 +32,6 @@ services:
       - .env
     ports:
       - "4308:4308"
-    environment:
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - postgres
       - minio

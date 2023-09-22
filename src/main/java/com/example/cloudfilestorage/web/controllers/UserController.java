@@ -1,9 +1,7 @@
 package com.example.cloudfilestorage.web.controllers;
 
-import com.example.cloudfilestorage.domain.File;
 import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
-import com.example.cloudfilestorage.repository.FileRepository;
 import com.example.cloudfilestorage.services.ImageService;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.user.UserDto;
@@ -16,14 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final ImageService imageService;
-    private final FileRepository fileRepository;
 
     @GetMapping("/")
     public String displayIndexPage() {
@@ -32,8 +27,7 @@ public class UserController {
 
     @GetMapping("/main")
     public String displayMainPage(Model model) {
-        List<File> files = fileRepository.findAll();
-        model.addAttribute("files", files);
+        model.addAttribute("files", imageService.getAll());
         return "main";
     }
 
@@ -64,13 +58,10 @@ public class UserController {
     }
 
     @PostMapping("/upload")
-    public String uploadImage(@RequestParam("image") MultipartFile multipartFile,
+    public String uploadImage(@RequestParam("file") MultipartFile file,
                               RedirectAttributes redirectAttributes) {
         try {
-            String name = imageService.upload(multipartFile);
-            File file = new File();
-            file.setName(name);
-            fileRepository.save(file);
+            imageService.upload(file);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }

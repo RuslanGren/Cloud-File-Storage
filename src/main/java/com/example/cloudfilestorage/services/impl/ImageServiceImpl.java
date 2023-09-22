@@ -1,6 +1,8 @@
 package com.example.cloudfilestorage.services.impl;
 
+import com.example.cloudfilestorage.domain.File;
 import com.example.cloudfilestorage.domain.exceptions.ImageUploadException;
+import com.example.cloudfilestorage.repository.FileRepository;
 import com.example.cloudfilestorage.services.ImageService;
 import com.example.cloudfilestorage.services.properties.MinioProperties;
 import io.minio.BucketExistsArgs;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.util.UUID;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +23,15 @@ public class ImageServiceImpl implements ImageService {
 
     private final MinioClient minioClient;
     private final MinioProperties minioProperties;
+    private final FileRepository fileRepository;
 
     @Override
-    public String upload(MultipartFile file) {
+    public List<File> getAll() {
+        return fileRepository.findAll();
+    }
+
+    @Override
+    public void upload(MultipartFile file) {
         try {
             createBucket();
         } catch (Exception e) {
@@ -32,7 +40,7 @@ public class ImageServiceImpl implements ImageService {
         if (file.isEmpty() || file.getOriginalFilename() == null) {
             throw new ImageUploadException("Image must have name");
         }
-        String fileName = generateFileName(file);
+        String fileName = file.getOriginalFilename();
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
@@ -40,7 +48,11 @@ public class ImageServiceImpl implements ImageService {
             throw new ImageUploadException("Image upload failed " + e.getMessage());
         }
         saveImage(inputStream, fileName);
-        return fileName;
+        File thisFile = File.builder()
+                .name(fileName)
+                .url(minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + fileName)
+                .build();
+        fileRepository.save(thisFile);
     }
 
     @SneakyThrows
@@ -53,16 +65,6 @@ public class ImageServiceImpl implements ImageService {
                     .bucket(minioProperties.getBucket())
                     .build());
         }
-    }
-
-    private String generateFileName(MultipartFile file) {
-        String extension = getExtension(file);
-        return UUID.randomUUID() + "." + extension;
-    }
-
-    private String getExtension(MultipartFile file) {
-        return file.getOriginalFilename()
-                .substring(file.getOriginalFilename().lastIndexOf(".") + 1);
     }
 
     @SneakyThrows

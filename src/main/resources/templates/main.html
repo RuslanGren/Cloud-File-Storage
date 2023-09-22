@@ -15,14 +15,14 @@ Authenticated as <span sec:authentication="name"></span>
 <form method="post" th:action="@{/upload}" enctype="multipart/form-data">
     <div class="form-group">
         <label>Choose image:</label>
-        <input type="file" name="image" accept="image/*">
+        <input type="file" name="file">
     </div>
     <button type="submit">Upload image</button>
     <div th:if="${error}" style="color:red" th:text="${error}"></div>
 </form>
 <br>
 <div th:each="file : ${files}">
-<p>name: <span th:text="${file.getName()}"></span></p>
+<p>name: <span th:text="${file.getName()}" th:href="${file.getUrl()}"></span></p>
 </div>
 </body>
 </html>
