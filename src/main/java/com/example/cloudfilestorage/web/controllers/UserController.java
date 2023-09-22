@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -63,11 +64,16 @@ public class UserController {
     }
 
     @PostMapping("/upload")
-    public String uploadImage(@RequestParam("file") MultipartFile multipartFile, Model model) {
-        String name = imageService.upload(multipartFile);
-        File file = new File();
-        file.setName(name);
-        fileRepository.save(file);
+    public String uploadImage(@RequestParam("image") MultipartFile multipartFile,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            String name = imageService.upload(multipartFile);
+            File file = new File();
+            file.setName(name);
+            fileRepository.save(file);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/main";
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org"
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
@@ -12,10 +12,13 @@ Authenticated as <span sec:authentication="name"></span>
     <button type="submit">Sign out</button>
 </form>
 <br>
-<form action="/upload" method="post">
-    <label for="input">Choose a picture:</label>
-    <input type="file" id="input" name="avatar" accept="image/png, image/jpeg" />
-    <input type="submit" value="Upload"/>
+<form method="post" th:action="@{/upload}" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Choose image:</label>
+        <input type="file" name="image" accept="image/*">
+    </div>
+    <button type="submit">Upload image</button>
+    <div th:if="${error}" style="color:red" th:text="${error}"></div>
 </form>
 <br>
 <div th:each="file : ${files}">
