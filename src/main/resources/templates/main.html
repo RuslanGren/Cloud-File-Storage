@@ -12,7 +12,14 @@ Authenticated as <span sec:authentication="name"></span>
     <button type="submit">Sign out</button>
 </form>
 <br>
-<label for="input">Choose a picture:</label>
-<input type="file" id="input" name="avatar" accept="image/png, image/jpeg" />
+<form action="/upload" method="post">
+    <label for="input">Choose a picture:</label>
+    <input type="file" id="input" name="avatar" accept="image/png, image/jpeg" />
+    <input type="submit" value="Upload"/>
+</form>
+<br>
+<div th:each="file : ${files}">
+<p>name: <span th:text="${file.getName()}"></span></p>
+</div>
 </body>
 </html>

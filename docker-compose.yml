@@ -38,6 +38,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - postgres
+      - minio
 
 volumes:
   postgres-data:
