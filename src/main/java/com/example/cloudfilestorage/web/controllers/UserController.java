@@ -1,8 +1,7 @@
 package com.example.cloudfilestorage.web.controllers;
 
-import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
-import com.example.cloudfilestorage.services.FileService;
+import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.user.UserDto;
 import jakarta.validation.Valid;
@@ -10,25 +9,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final FileService fileService;
 
     @GetMapping("/")
     public String displayIndexPage() {
         return "index";
-    }
-
-    @GetMapping("/main")
-    public String displayMainPage(Model model) {
-        model.addAttribute("files", fileService.getAll());
-        return "main";
     }
 
     @GetMapping("/login")
@@ -55,28 +47,5 @@ public class UserController {
             model.addAttribute("error", e.getMessage());
             return "register";
         }
-    }
-
-    @PostMapping("/upload")
-    public String uploadImage(@RequestParam("file") MultipartFile file,
-                              RedirectAttributes redirectAttributes) {
-        try {
-            fileService.upload(file);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        }
-        return "redirect:/main";
-    }
-
-    @GetMapping("/{id}/show")
-    public String getFileById(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("file", fileService.getById(id));
-        return "file";
-    }
-
-    @PostMapping("/{id}/delete")
-    public String deleteFileById(@PathVariable("id") Long id) {
-        fileService.deleteFileById(id);
-        return "redirect:/main";
     }
 }

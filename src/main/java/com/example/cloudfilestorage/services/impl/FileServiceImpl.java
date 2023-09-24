@@ -6,10 +6,12 @@ import com.example.cloudfilestorage.domain.file.File;
 import com.example.cloudfilestorage.domain.exceptions.FileUploadException;
 import com.example.cloudfilestorage.repository.FileRepository;
 import com.example.cloudfilestorage.services.FileService;
+import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.services.properties.MinioProperties;
 import io.minio.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,12 +25,13 @@ public class FileServiceImpl implements FileService {
     private final MinioClient minioClient;
     private final MinioProperties minioProperties;
     private final FileRepository fileRepository;
+    private final UserService userService;
 
     @Override
     public void deleteFileById(Long id) {
         File file = fileRepository.findById(id).orElseThrow(FileNotFoundException::new);
         try {
-            deleteFile(file.getName());
+            deleteFile(file.getFileUrl());
         } catch (Exception e) {
             throw new FileDeleteException("File delete failed " + e.getMessage());
         }
@@ -46,7 +49,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void upload(MultipartFile file) {
+    public void upload(MultipartFile file, UserDetails userDetails) {
         try {
             createBucket();
         } catch (Exception e) {
@@ -56,16 +59,19 @@ public class FileServiceImpl implements FileService {
             throw new FileUploadException("Image must have name");
         }
         String fileName = file.getOriginalFilename();
+        String packageName = String.format("user-%d-files/", userService.getByUsername(userDetails.getUsername()).getId());
+        String fileUrl = packageName + fileName;
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
         } catch (Exception e) {
             throw new FileUploadException("Image upload failed " + e.getMessage());
         }
-        saveFile(inputStream, fileName);
+        saveFile(inputStream, fileUrl);
         File thisFile = File.builder()
                 .name(fileName)
-                .url("http://localhost:9000/" + minioProperties.getBucket() + "/" + fileName)
+                .fileUrl(fileUrl)
+                .globalUrl("http://localhost:9000/" + minioProperties.getBucket() + "/" + fileUrl)
                 .build();
         fileRepository.save(thisFile);
     }
@@ -83,19 +89,19 @@ public class FileServiceImpl implements FileService {
     }
 
     @SneakyThrows
-    private void saveFile(InputStream inputStream, String fileName) {
+    private void saveFile(InputStream inputStream, String fileUrl) {
         minioClient.putObject(PutObjectArgs.builder()
                 .stream(inputStream, inputStream.available(), -1)
                 .bucket(minioProperties.getBucket())
-                .object(fileName)
+                .object(fileUrl)
                 .build());
     }
 
     @SneakyThrows
-    private void deleteFile(String fileName) {
+    private void deleteFile(String fileUrl) {
         minioClient.removeObject(RemoveObjectArgs.builder()
                 .bucket(minioProperties.getBucket())
-                .object(fileName)
+                .object(fileUrl)
                 .build());
     }
 }

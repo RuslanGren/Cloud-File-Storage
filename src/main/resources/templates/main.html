@@ -27,6 +27,13 @@ Authenticated as <span sec:authentication="name"></span>
     <div th:if="${error}" style="color:red" th:text="${error}"></div>
 </form>
 <br>
+<form th:object="${package}" th:action="@{/package-create}" method="post">
+    <label for="package_name">Package Name:</label>
+    <input type="text" id="package_name" name="package_name" th:field="*{name}" required>
+    <input type="submit" value="Create package">
+    <div th:if="${error_name}" style="color:red" th:text="${error_name}"></div>
+</form>
+<br>
 <div th:each="file : ${files}">
     <p class="file">name: <a th:href="@{/{id}/show(id=${file.getId()})}" th:text="${file.getName()}">text</a></p>
 </div>
