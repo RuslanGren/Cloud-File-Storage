@@ -1,20 +1,21 @@
-package com.example.cloudfilestorage.domain.user;
+package com.example.cloudfilestorage.domain.file;
 
-import com.example.cloudfilestorage.domain.file.Folder;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "folders")
+public class Folder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
+    private String name;
+    private String path;
 }

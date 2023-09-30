@@ -1,18 +1,15 @@
 package com.example.cloudfilestorage.services;
 
 import com.example.cloudfilestorage.domain.file.File;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface FileService {
+    void createNewFile(String name, String path, String url);
 
-    void upload(MultipartFile multipartFile, UserDetails userDetails);
+    String deleteFileById(Long id);
 
     File getById(Long id);
 
     List<File> getAll();
-
-    void deleteFileById(Long id);
 }

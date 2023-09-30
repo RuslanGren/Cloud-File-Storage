@@ -2,6 +2,7 @@ package com.example.cloudfilestorage.web.controllers;
 
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.domain.user.User;
+import com.example.cloudfilestorage.services.FolderService;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.user.UserDto;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final FolderService folderService;
 
     @GetMapping("/")
     public String displayIndexPage() {
@@ -42,6 +44,8 @@ public class UserController {
         }
         try {
             userService.create(userDto);
+        //    folderService.createNewFolder(
+        //            String.format("user-%d-files", userService.getByUsername(userDto.getUsername()).getId()));
             return "redirect:/main";
         } catch (CustomBadRequestException e) {
             model.addAttribute("error", e.getMessage());

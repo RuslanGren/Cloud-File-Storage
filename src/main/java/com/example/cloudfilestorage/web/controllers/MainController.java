@@ -1,11 +1,10 @@
 package com.example.cloudfilestorage.web.controllers;
 
 import com.example.cloudfilestorage.services.FileService;
+import com.example.cloudfilestorage.services.FileSystemService;
 import com.example.cloudfilestorage.web.file.PackageNameDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,9 +17,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class MainController {
     private final FileService fileService;
+    private final FileSystemService fileSystemService;
 
     @GetMapping("/main")
     public String displayMainPage(Model model) {
+        model.addAttribute("packages");
         model.addAttribute("files", fileService.getAll());
         model.addAttribute("package", new PackageNameDto());
         return "main";
@@ -29,10 +30,9 @@ public class MainController {
     @PostMapping("/upload")
     public String uploadFile(
             @RequestParam("file") MultipartFile file,
-            RedirectAttributes redirectAttributes,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            RedirectAttributes redirectAttributes) {
         try {
-            fileService.upload(file, userDetails);
+            fileSystemService.upload(file);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
