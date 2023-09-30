@@ -9,7 +9,9 @@ public interface FileService {
 
     String deleteFileById(Long id);
 
-    File getById(Long id);
+    File getByPath(String path);
+
+    List<File> getFileByPathStartingWith(String path);
 
     List<File> getAll();
 }

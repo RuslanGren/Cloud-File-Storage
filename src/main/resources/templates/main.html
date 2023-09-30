@@ -4,12 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Authenticated</title>
-    <style>
-        .file {
-            display: inline-block;
-            vertical-align: middle;
-        }
-    </style>
 </head>
 <body>
 <h1>Authenticated</h1>
@@ -18,24 +12,7 @@ Authenticated as <span sec:authentication="name"></span>
     <button type="submit">Sign out</button>
 </form>
 <br>
-<form method="post" th:action="@{/upload}" enctype="multipart/form-data">
-    <div class="form-group">
-        <label>Choose file:</label>
-        <input type="file" name="file">
-    </div>
-    <button type="submit">Upload file</button>
-    <div th:if="${error}" style="color:red" th:text="${error}"></div>
-</form>
-<br>
-<form th:object="${package}" th:action="@{/package-create}" method="post">
-    <label for="package_name">Package Name:</label>
-    <input type="text" id="package_name" name="package_name" th:field="*{name}" required>
-    <input type="submit" value="Create package">
-    <div th:if="${error_name}" style="color:red" th:text="${error_name}"></div>
-</form>
-<br>
-<div th:each="file : ${files}">
-    <p class="file">name: <a th:href="@{/{id}/show(id=${file.getId()})}" th:text="${file.getName()}">text</a></p>
-</div>
+<h1>MY FILES:</h1>
+<a th:href="@{/search/user-{path}-files/(path=${#authentication.getPrincipal().getId()})}">files</a>
 </body>
 </html>

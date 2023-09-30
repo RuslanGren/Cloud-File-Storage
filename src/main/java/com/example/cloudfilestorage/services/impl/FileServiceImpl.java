@@ -31,8 +31,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public File getById(Long id) {
-        return fileRepository.findById(id).orElseThrow();
+    public File getByPath(String path) {
+        return fileRepository.findByPath(path);
+    }
+
+    @Override
+    public List<File> getFileByPathStartingWith(String path) {
+        return fileRepository.findByPathStartingWith(path);
     }
 
     @Override

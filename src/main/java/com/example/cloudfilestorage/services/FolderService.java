@@ -7,4 +7,10 @@ import java.util.List;
 
 public interface FolderService {
     void createNewFolder(String name, String path);
+
+    Folder getFolderByPath(String path);
+
+    List<Folder> getFolderByPathStartingWith(String path);
+
+    List<Folder> getAll();
 }

@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
+    File findByPath(String path);
     List<File> findByPathStartingWith(String path);
 }

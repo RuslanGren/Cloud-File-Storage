@@ -24,8 +24,6 @@ public class FileSystemServiceImpl implements FileSystemService {
     private final FileService fileService;
     private final FolderService folderService;
 
-    private final String DEFAULT_URL = minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/";
-
     @Override
     @Transactional
     public void deleteFileById(Long id) {
@@ -37,15 +35,16 @@ public class FileSystemServiceImpl implements FileSystemService {
         }
     }
 
+    @Transactional
     @Override
     public void upload(MultipartFile file) {
         try {
             createBucket();
         } catch (Exception e) {
-            throw new FileUploadException("Image upload failed " + e.getMessage());
+            throw new FileUploadException("File upload failed " + e.getMessage());
         }
         if (file.isEmpty() || file.getOriginalFilename() == null) {
-            throw new FileUploadException("Image must have name");
+            throw new FileUploadException("File must have name");
         }
         String fileName = file.getOriginalFilename();
         String path = fileName;
@@ -53,10 +52,20 @@ public class FileSystemServiceImpl implements FileSystemService {
         try {
             inputStream = file.getInputStream();
         } catch (Exception e) {
-            throw new FileUploadException("Image upload failed " + e.getMessage());
+            throw new FileUploadException("File upload failed " + e.getMessage());
         }
         saveFile(inputStream, path);
-        fileService.createNewFile(fileName, path, DEFAULT_URL + path);
+        fileService.createNewFile(fileName, path, minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + path);
+    }
+
+    @Transactional
+    @Override
+    public void createNewFolder(String path) {
+        try {
+            folderService.createNewFolder(path);
+        } catch (Exception e) {
+            throw new FileUploadException("Folder create failed" + e.getMessage());
+        }
     }
 
     @SneakyThrows

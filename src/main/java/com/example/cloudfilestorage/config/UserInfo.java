@@ -20,6 +20,10 @@ public class UserInfo implements UserDetails {
         return Collections.emptyList();
     }
 
+    public Long getId() {
+        return user.getId();
+    }
+
     @Override
     public String getPassword() {
         return user.getPassword();
