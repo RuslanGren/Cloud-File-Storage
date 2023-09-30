@@ -37,7 +37,7 @@ public class FileSystemServiceImpl implements FileSystemService {
 
     @Transactional
     @Override
-    public void upload(MultipartFile file) {
+    public void upload(MultipartFile file, String path) {
         try {
             createBucket();
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class FileSystemServiceImpl implements FileSystemService {
             throw new FileUploadException("File must have name");
         }
         String fileName = file.getOriginalFilename();
-        String path = fileName;
+        path += fileName;
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
@@ -60,9 +60,9 @@ public class FileSystemServiceImpl implements FileSystemService {
 
     @Transactional
     @Override
-    public void createNewFolder(String path) {
+    public void createNewFolder(String name, String path) {
         try {
-            folderService.createNewFolder(path);
+            folderService.createNewFolder(name, path);
         } catch (Exception e) {
             throw new FileUploadException("Folder create failed" + e.getMessage());
         }

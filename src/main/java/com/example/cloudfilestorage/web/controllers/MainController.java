@@ -3,7 +3,7 @@ package com.example.cloudfilestorage.web.controllers;
 import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.FileSystemService;
 import com.example.cloudfilestorage.services.FolderService;
-import com.example.cloudfilestorage.web.file.PackageNameDto;
+import com.example.cloudfilestorage.web.file.FolderDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -26,7 +26,7 @@ public class MainController {
         model.addAttribute("packages");
         model.addAttribute("folders", folderService.getAll());
         model.addAttribute("files", fileService.getAll());
-        model.addAttribute("folder", new PackageNameDto());
+        model.addAttribute("folder", new FolderDto());
         return "main";
     }
 
@@ -36,7 +36,7 @@ public class MainController {
             @RequestParam("path") String path,
             RedirectAttributes redirectAttributes) {
         try {
-            fileSystemService.upload(file);
+            fileSystemService.upload(file, path);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
@@ -44,14 +44,14 @@ public class MainController {
     }
 
     @PostMapping("/folder-create")
-    public String createNewFolder(@ModelAttribute("package") @Valid PackageNameDto packageNameDto,
+    public String createNewFolder(@ModelAttribute("package") @Valid FolderDto folderDto,
                                 BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 redirectAttributes.addFlashAttribute("error_" + error.getField(), error.getDefaultMessage());
             }
         }
-        fileSystemService.createNewFolder(packageNameDto.getName());
+        fileSystemService.createNewFolder(folderDto.getName(), folderDto.getPath());
         return "redirect:/main";
     }
 

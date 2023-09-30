@@ -29,10 +29,10 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public void createNewFolder(String name) {
+    public void createNewFolder(String name, String path) {
         Folder folder = Folder.builder()
                 .name(name)
-                .path("path") // change
+                .path(path + "/")
                 .build();
         folderRepository.save(folder);
     }

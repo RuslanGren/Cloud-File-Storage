@@ -4,9 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileSystemService {
 
-    void upload(MultipartFile multipartFile);
+    void upload(MultipartFile multipartFile, String path);
 
-    void createNewFolder(String path);
+    void createNewFolder(String name, String path);
 
     void deleteFileById(Long id);
 }
