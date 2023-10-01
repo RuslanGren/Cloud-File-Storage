@@ -1,12 +1,11 @@
 package com.example.cloudfilestorage.services.impl;
 
 import com.example.cloudfilestorage.domain.file.File;
+import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.repository.FileRepository;
 import com.example.cloudfilestorage.services.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -14,11 +13,12 @@ public class FileServiceImpl implements FileService {
     private final FileRepository fileRepository;
 
     @Override
-    public void createNewFile(String name, String path, String url) {
+    public void createNewFile(String name, Folder folder, String path, String url) {
         File file = File.builder()
                 .name(name)
                 .path(path)
                 .url(url)
+                .folder(folder)
                 .build();
         fileRepository.save(file);
     }
@@ -33,15 +33,5 @@ public class FileServiceImpl implements FileService {
     @Override
     public File getByPath(String path) {
         return fileRepository.findByPath(path);
-    }
-
-    @Override
-    public List<File> findInFolder(String path) {
-        return fileRepository.findInFolder(path);
-    }
-
-    @Override
-    public List<File> getAll() {
-        return fileRepository.findAll();
     }
 }

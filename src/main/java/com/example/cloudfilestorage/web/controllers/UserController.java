@@ -45,7 +45,7 @@ public class UserController {
         try {
             userService.create(userDto);
             String rootFolderName = String.format("user-%d-files", userService.getByUsername(userDto.getUsername()).getId());
-            folderService.createNewFolder(rootFolderName, rootFolderName);
+            folderService.createRootFolder(rootFolderName);
             return "redirect:/main";
         } catch (CustomBadRequestException e) {
             model.addAttribute("error", e.getMessage());

@@ -14,26 +14,35 @@ public class FolderServiceImpl implements FolderService {
     private final FolderRepository folderRepository;
 
     @Override
-    public List<Folder> findInFolder(String path) {
-        return folderRepository.findInFolder(path);
+    public void createRootFolder(String name) {
+        Folder folder = Folder.builder()
+                .name(name)
+                .path(name + "/")
+                .build();
+        folderRepository.save(folder);
+    }
+
+    @Override
+    public void createSubFolder(String name, String path) {
+        Folder rootFolder = folderRepository.findByPath(path);
+
+        Folder subFolder = Folder.builder()
+                .name(name)
+                .path(path + name + "/")
+                .build();
+
+        // save subfolder in db
+        folderRepository.save(subFolder);
+        // add subfolder in rootfolder
+        List<Folder> updatedSubFoldersList = rootFolder.getSubFolders();
+        updatedSubFoldersList.add(subFolder);
+        rootFolder.setSubFolders(updatedSubFoldersList);
+        // save rootfolder after update
+        folderRepository.save(rootFolder);
     }
 
     @Override
     public Folder getFolderByPath(String path) {
         return folderRepository.findByPath(path);
-    }
-
-    @Override
-    public List<Folder> getAll() {
-        return folderRepository.findAll();
-    }
-
-    @Override
-    public void createNewFolder(String name, String path) {
-        Folder folder = Folder.builder()
-                .name(name)
-                .path(path)
-                .build();
-        folderRepository.save(folder);
     }
 }

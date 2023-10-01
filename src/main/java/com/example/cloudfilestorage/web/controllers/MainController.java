@@ -48,7 +48,7 @@ public class MainController {
                 redirectAttributes.addFlashAttribute("error_" + error.getField(), error.getDefaultMessage());
             }
         } else {
-            fileSystemService.createNewFolder(folderDto.getName(), folderDto.getPath() + "/" + folderDto.getName());
+            fileSystemService.createSubFolder(folderDto.getName(), folderDto.getPath());
         }
         return "main";
     }
@@ -57,9 +57,7 @@ public class MainController {
     public String getFolder(HttpServletRequest request, Model model) {
         String path = request.getRequestURL().toString().split("/search/")[1];
         model.addAttribute("folderDto", new FolderDto());
-        model.addAttribute("parent_folder", folderService.getFolderByPath(path));
-        model.addAttribute("folders", folderService.findInFolder(path));
-        model.addAttribute("files", fileService.findInFolder(path));
+        model.addAttribute("folder", folderService.getFolderByPath(path));
         return "folder";
     }
 

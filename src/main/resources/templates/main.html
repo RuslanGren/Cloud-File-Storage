@@ -13,6 +13,6 @@ Authenticated as <span sec:authentication="name"></span>
 </form>
 <br>
 <h1>MY FILES:</h1>
-<a th:href="@{/search/user-{path}-files(path=${#authentication.getPrincipal().getId()})}">files</a>
+<a th:href="@{/search/user-{path}-files/(path=${#authentication.getPrincipal().getId()})}">files</a>
 </body>
 </html>

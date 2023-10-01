@@ -6,7 +6,7 @@ public interface FileSystemService {
 
     void upload(MultipartFile multipartFile, String path);
 
-    void createNewFolder(String name, String path);
+    void createSubFolder(String name, String path);
 
     void deleteFileById(Long id);
 }

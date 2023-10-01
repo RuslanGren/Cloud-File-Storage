@@ -2,6 +2,7 @@ package com.example.cloudfilestorage.services.impl;
 
 import com.example.cloudfilestorage.domain.exceptions.FileDeleteException;
 import com.example.cloudfilestorage.domain.exceptions.FileUploadException;
+import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.FileSystemService;
 import com.example.cloudfilestorage.services.FolderService;
@@ -47,7 +48,8 @@ public class FileSystemServiceImpl implements FileSystemService {
             throw new FileUploadException("File must have name");
         }
         String fileName = file.getOriginalFilename();
-        path = path + "/" + fileName;
+        Folder rootFolder = folderService.getFolderByPath(path);
+        path = path + fileName;
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
@@ -55,14 +57,14 @@ public class FileSystemServiceImpl implements FileSystemService {
             throw new FileUploadException("File upload failed " + e.getMessage());
         }
         saveFile(inputStream, path);
-        fileService.createNewFile(fileName, path, minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + path);
+        fileService.createNewFile(fileName, rootFolder, path, minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + path);
     }
 
     @Transactional
     @Override
-    public void createNewFolder(String name, String path) {
+    public void createSubFolder(String name, String path) {
         try {
-            folderService.createNewFolder(name, path);
+            folderService.createSubFolder(name, path);
         } catch (Exception e) {
             throw new FileUploadException("Folder create failed" + e.getMessage());
         }

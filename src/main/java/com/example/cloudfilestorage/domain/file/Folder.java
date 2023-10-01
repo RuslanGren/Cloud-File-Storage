@@ -24,9 +24,6 @@ public class Folder {
     @OneToMany(mappedBy = "folder")
     private List<File> files;
 
-    @OneToMany(mappedBy = "parentFolder")
+    @OneToMany
     private List<Folder> subFolders;
-
-    @ManyToOne
-    private Folder parentFolder;
 }

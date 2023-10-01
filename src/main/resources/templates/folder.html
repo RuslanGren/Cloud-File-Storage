@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${parent_folder.getName()}"></title>
+    <title th:text="${folder.getName()}"></title>
 </head>
 <body>
 <form method="post" th:action="@{/upload}" enctype="multipart/form-data">
@@ -11,7 +11,7 @@
         <input type="file" name="file">
     </div>
     <!-- path -->
-    <input type="hidden" name="path" th:value="${parent_folder.getPath()}">
+    <input type="hidden" name="path" th:value="${folder.getPath()}">
     <button type="submit">Upload file</button>
     <div th:if="${error}" style="color:red" th:text="${error}"></div>
 </form>
@@ -19,15 +19,15 @@
 <form th:object="${folderDto}" th:action="@{/folder-create}" method="post">
     <label for="folder_name">Folder Name:</label>
     <input type="text" id="folder_name" name="folder_name" th:field="*{name}" required>
-    <input type="hidden" id="folder_path" name="folder_path" th:value="${parent_folder.getPath()}" th:attr="name='path'">
+    <input type="hidden" id="folder_path" name="folder_path" th:value="${folder.getPath()}" th:attr="name='path'">
     <input type="submit" value="Create folder">
     <div th:if="${error_name}" style="color:red" th:text="${error_name}"></div>
 </form>
 <br>
-<div th:each="folder : ${folders}">
-    <p class="file">Folder: <a th:href="@{/search/{path}(path=${folder.getPath()})}" th:text="${folder.getName()}">text</a></p>
+<div th:each="subFolder : ${folder.getSubFolders()}">
+    <p class="file">Folder: <a th:href="@{/search/{path}(path=${subFolder.getPath()})}" th:text="${subFolder.getName()}">text</a></p>
 </div>
-<div th:each="file : ${files}">
+<div th:each="file : ${folder.getFiles()}">
     <p class="file">File: <a th:href="@{/select/{path}(path=${file.getPath()})}" th:text="${file.getName()}">text</a></p>
 </div>
 </body>
