@@ -37,7 +37,7 @@ public class MainController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/main";
+        return "redirect:/search/" + path;
     }
 
     @PostMapping("/folder-create")
@@ -50,7 +50,7 @@ public class MainController {
         } else {
             fileSystemService.createSubFolder(folderDto.getName(), folderDto.getPath());
         }
-        return "main";
+        return "redirect:/search/" + folderDto.getPath();
     }
 
     @GetMapping("/search/**")

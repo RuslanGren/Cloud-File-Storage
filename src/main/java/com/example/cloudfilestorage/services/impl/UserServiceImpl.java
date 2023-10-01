@@ -1,7 +1,6 @@
 package com.example.cloudfilestorage.services.impl;
 
 import com.example.cloudfilestorage.domain.exceptions.UserNotFoundException;
-import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.repository.UserRepository;
