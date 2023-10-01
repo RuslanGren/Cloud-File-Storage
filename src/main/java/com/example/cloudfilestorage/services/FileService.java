@@ -11,7 +11,7 @@ public interface FileService {
 
     File getByPath(String path);
 
-    List<File> getFileByPathStartingWith(String path);
+    List<File> findInFolder(String path);
 
     List<File> getAll();
 }

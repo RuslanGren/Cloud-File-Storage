@@ -36,8 +36,8 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public List<File> getFileByPathStartingWith(String path) {
-        return fileRepository.findByPathStartingWith(path);
+    public List<File> findInFolder(String path) {
+        return fileRepository.findInFolder(path);
     }
 
     @Override

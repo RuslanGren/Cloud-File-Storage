@@ -10,7 +10,7 @@ public interface FolderService {
 
     Folder getFolderByPath(String path);
 
-    List<Folder> getFolderByPathStartingWith(String path);
+    List<Folder> findInFolder(String path);
 
     List<Folder> getAll();
 }

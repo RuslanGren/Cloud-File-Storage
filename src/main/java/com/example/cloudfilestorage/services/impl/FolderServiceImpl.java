@@ -14,8 +14,8 @@ public class FolderServiceImpl implements FolderService {
     private final FolderRepository folderRepository;
 
     @Override
-    public List<Folder> getFolderByPathStartingWith(String path) {
-        return folderRepository.findByPathStartingWith(path);
+    public List<Folder> findInFolder(String path) {
+        return folderRepository.findInFolder(path);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class FolderServiceImpl implements FolderService {
     public void createNewFolder(String name, String path) {
         Folder folder = Folder.builder()
                 .name(name)
-                .path(path + "/")
+                .path(path)
                 .build();
         folderRepository.save(folder);
     }

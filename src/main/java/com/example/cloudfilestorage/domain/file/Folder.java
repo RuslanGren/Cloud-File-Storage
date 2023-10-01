@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,4 +20,13 @@ public class Folder {
     private Long id;
     private String name;
     private String path;
+
+    @OneToMany(mappedBy = "folder")
+    private List<File> files;
+
+    @OneToMany(mappedBy = "parentFolder")
+    private List<Folder> subFolders;
+
+    @ManyToOne
+    private Folder parentFolder;
 }

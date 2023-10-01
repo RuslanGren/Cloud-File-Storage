@@ -16,19 +16,19 @@
     <div th:if="${error}" style="color:red" th:text="${error}"></div>
 </form>
 <br>
-<form th:object="${folder}" th:action="@{/folder-create}" method="post">
+<form th:object="${folderDto}" th:action="@{/folder-create}" method="post">
     <label for="folder_name">Folder Name:</label>
     <input type="text" id="folder_name" name="folder_name" th:field="*{name}" required>
-    <input type="hidden" id="folder_path" name="folder_path" th:value="${parent_folder.getPath()}" th:field="*{path}">
+    <input type="hidden" id="folder_path" name="folder_path" th:value="${parent_folder.getPath()}" th:attr="name='path'">
     <input type="submit" value="Create folder">
     <div th:if="${error_name}" style="color:red" th:text="${error_name}"></div>
 </form>
 <br>
 <div th:each="folder : ${folders}">
-    <p class="file">Folder: <a th:href="@{/{path}/(path=${folder.getPath()})}" th:text="${folder.getName()}">text</a></p>
+    <p class="file">Folder: <a th:href="@{/search/{path}(path=${folder.getPath()})}" th:text="${folder.getName()}">text</a></p>
 </div>
 <div th:each="file : ${files}">
-    <p class="file">File: <a th:href="@{/{path}(path=${file.getPath()})}" th:text="${file.getName()}">text</a></p>
+    <p class="file">File: <a th:href="@{/select/{path}(path=${file.getPath()})}" th:text="${file.getName()}">text</a></p>
 </div>
 </body>
 </html>

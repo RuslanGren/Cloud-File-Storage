@@ -47,7 +47,7 @@ public class FileSystemServiceImpl implements FileSystemService {
             throw new FileUploadException("File must have name");
         }
         String fileName = file.getOriginalFilename();
-        path += fileName;
+        path = path + "/" + fileName;
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();

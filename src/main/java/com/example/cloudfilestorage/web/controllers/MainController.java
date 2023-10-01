@@ -4,6 +4,7 @@ import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.FileSystemService;
 import com.example.cloudfilestorage.services.FolderService;
 import com.example.cloudfilestorage.web.file.FolderDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -22,11 +23,7 @@ public class MainController {
     private final FolderService folderService;
 
     @GetMapping("/main")
-    public String displayMainPage(Model model) {
-        model.addAttribute("packages");
-        model.addAttribute("folders", folderService.getAll());
-        model.addAttribute("files", fileService.getAll());
-        model.addAttribute("folder", new FolderDto());
+    public String displayMainPage() {
         return "main";
     }
 
@@ -50,21 +47,25 @@ public class MainController {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 redirectAttributes.addFlashAttribute("error_" + error.getField(), error.getDefaultMessage());
             }
+        } else {
+            fileSystemService.createNewFolder(folderDto.getName(), folderDto.getPath() + "/" + folderDto.getName());
         }
-        fileSystemService.createNewFolder(folderDto.getName(), folderDto.getPath());
-        return "redirect:/main";
+        return "main";
     }
 
-    @GetMapping("/search/{path}/")
-    public String getFolder(@PathVariable("path") String path, Model model) {
+    @GetMapping("/search/**")
+    public String getFolder(HttpServletRequest request, Model model) {
+        String path = request.getRequestURL().toString().split("/search/")[1];
+        model.addAttribute("folderDto", new FolderDto());
         model.addAttribute("parent_folder", folderService.getFolderByPath(path));
-        model.addAttribute("folders", folderService.getFolderByPathStartingWith(path));
-        model.addAttribute("files", fileService.getFileByPathStartingWith(path));
+        model.addAttribute("folders", folderService.findInFolder(path));
+        model.addAttribute("files", fileService.findInFolder(path));
         return "folder";
     }
 
-    @GetMapping("/search/{path}")
-    public String getFile(@PathVariable("path") String path, Model model) {
+    @GetMapping("/select/**")
+    public String getFile(HttpServletRequest request, Model model) {
+        String path = request.getRequestURL().toString().split("/select/")[1];
         model.addAttribute("file", fileService.getByPath(path));
         return "file";
     }
