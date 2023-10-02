@@ -70,7 +70,7 @@ public class MainController {
 
     @PostMapping("/{id}/delete")
     public String deleteFileById(@PathVariable("id") Long id) {
-        fileService.deleteFileById(id);
+        fileSystemService.deleteFileById(id);
         return "redirect:/main";
     }
 }

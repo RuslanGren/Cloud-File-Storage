@@ -24,7 +24,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String deleteFileById(Long id) {
+    public String deleteFileByIdAndReturnPath(Long id) {
         File file = fileRepository.findById(id).orElseThrow();
         fileRepository.delete(file);
         return file.getPath();

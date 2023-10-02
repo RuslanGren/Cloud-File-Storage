@@ -29,7 +29,7 @@ public class FileSystemServiceImpl implements FileSystemService {
     @Transactional
     public void deleteFileById(Long id) {
         try {
-            String path = fileService.deleteFileById(id);
+            String path = fileService.deleteFileByIdAndReturnPath(id);
             deleteFile(path);
         } catch (Exception e) {
             throw new FileDeleteException("File delete failed " + e.getMessage());

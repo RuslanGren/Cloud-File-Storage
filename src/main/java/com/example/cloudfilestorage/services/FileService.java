@@ -6,7 +6,7 @@ import com.example.cloudfilestorage.domain.file.Folder;
 public interface FileService {
     void createNewFile(String name, Folder folder, String path, String url);
 
-    String deleteFileById(Long id);
+    String deleteFileByIdAndReturnPath(Long id);
 
     File getByPath(String path);
 }
