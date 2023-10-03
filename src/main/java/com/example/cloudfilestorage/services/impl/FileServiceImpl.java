@@ -1,5 +1,6 @@
 package com.example.cloudfilestorage.services.impl;
 
+import com.example.cloudfilestorage.domain.exceptions.FileNotFoundException;
 import com.example.cloudfilestorage.domain.file.File;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.repository.FileRepository;
@@ -24,14 +25,21 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String deleteFileByIdAndReturnPath(Long id) {
-        File file = fileRepository.findById(id).orElseThrow();
+    public void renameFileByPath(String path, String name, String updatedPath) {
+        File file = fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
+        file.setName(name);
+        file.setPath(updatedPath);
+        fileRepository.save(file);
+    }
+
+    @Override
+    public void deleteFileByPath(String path) {
+        File file = fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
         fileRepository.delete(file);
-        return file.getPath();
     }
 
     @Override
     public File getByPath(String path) {
-        return fileRepository.findByPath(path);
+        return fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
     }
 }

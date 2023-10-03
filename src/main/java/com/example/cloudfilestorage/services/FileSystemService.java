@@ -8,5 +8,7 @@ public interface FileSystemService {
 
     void createSubFolder(String name, String path);
 
-    void deleteFileById(Long id);
+    void deleteFileByPath(String path);
+
+    void renameFileByPath(String path, String name);
 }

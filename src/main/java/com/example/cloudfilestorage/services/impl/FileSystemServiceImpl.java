@@ -25,12 +25,23 @@ public class FileSystemServiceImpl implements FileSystemService {
     private final FileService fileService;
     private final FolderService folderService;
 
-    @Override
     @Transactional
-    public void deleteFileById(Long id) {
+    @Override
+    public void renameFileByPath(String path, String name) {
+        String fileType = path.substring(path.lastIndexOf("."));
+        String updatedPath = path.substring(0, path.lastIndexOf("/")) + "/" + name + fileType;
+        fileService.renameFileByPath(path, name, updatedPath); // update file in db
+        InputStream inputStream = getFile(path); // get file from minio
+        deleteFile(path); // delete file in minio
+        saveFile(inputStream, updatedPath); // save the same file in minio but with updated path
+    }
+
+    @Transactional
+    @Override
+    public void deleteFileByPath(String path) {
         try {
-            String path = fileService.deleteFileByIdAndReturnPath(id);
-            deleteFile(path);
+            fileService.deleteFileByPath(path); // delete file in db
+            deleteFile(path); // delete file in MinIO
         } catch (Exception e) {
             throw new FileDeleteException("File delete failed " + e.getMessage());
         }
@@ -40,7 +51,7 @@ public class FileSystemServiceImpl implements FileSystemService {
     @Override
     public void upload(MultipartFile file, String path) {
         try {
-            createBucket();
+            createBucket(); // create bucket in minio
         } catch (Exception e) {
             throw new FileUploadException("File upload failed " + e.getMessage());
         }
@@ -48,8 +59,9 @@ public class FileSystemServiceImpl implements FileSystemService {
             throw new FileUploadException("File must have name");
         }
         String fileName = file.getOriginalFilename();
-        Folder rootFolder = folderService.getFolderByPath(path);
-        path = path + fileName;
+        Folder rootFolder = folderService.getFolderByPath(path); // get folder for file
+        path = path + fileName; // path folder + fileName
+        String url = minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + path;
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
@@ -57,7 +69,7 @@ public class FileSystemServiceImpl implements FileSystemService {
             throw new FileUploadException("File upload failed " + e.getMessage());
         }
         saveFile(inputStream, path);
-        fileService.createNewFile(fileName, rootFolder, path, minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + path);
+        fileService.createNewFile(fileName, rootFolder, path, url);
     }
 
     @Transactional
@@ -94,6 +106,14 @@ public class FileSystemServiceImpl implements FileSystemService {
     @SneakyThrows
     public void deleteFile(String path) {
         minioClient.removeObject(RemoveObjectArgs.builder()
+                .bucket(minioProperties.getBucket())
+                .object(path)
+                .build());
+    }
+
+    @SneakyThrows
+    public InputStream getFile(String path) {
+        return minioClient.getObject(GetObjectArgs.builder()
                 .bucket(minioProperties.getBucket())
                 .object(path)
                 .build());

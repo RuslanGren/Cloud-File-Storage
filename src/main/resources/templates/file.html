@@ -8,7 +8,17 @@
 <p>name: <a th:href="${file.getUrl()}" th:text="${file.getName()}" download>text</a></p>
 <a th:href="${file.getUrl()}">Download</a>
 <br><br>
-<form th:method="post" th:action="@{/{id}/delete(id=${file.getId()})}">
+<p>Rename file:</p>
+<form th:object="${newNameFileDto}" th:action="@{/rename-file/{path}(path=${file.getPath()})}" method="post">
+    <label for="name">New Name:</label>
+    <input type="text" id="name" th:field="*{name}" required>
+    <input type="hidden" name="_method" value="PATCH">
+    <br>
+    <button type="submit">Rename</button>
+</form>
+<br>
+<form th:method="post" th:action="@{/delete/{path}(path=${file.getPath()})}">
+    <input type="hidden" name="_method" value="DELETE">
     <input type="submit" value="Delete">
 </form>
 </body>
