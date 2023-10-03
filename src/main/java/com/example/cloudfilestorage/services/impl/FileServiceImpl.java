@@ -29,6 +29,7 @@ public class FileServiceImpl implements FileService {
         File file = fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
         file.setName(name);
         file.setPath(updatedPath);
+        file.setUrl(String.format("%s/%s", file.getUrl().substring(0, file.getUrl().lastIndexOf("/")), name));
         fileRepository.save(file);
     }
 

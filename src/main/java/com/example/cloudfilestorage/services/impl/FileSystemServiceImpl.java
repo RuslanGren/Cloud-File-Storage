@@ -1,6 +1,7 @@
 package com.example.cloudfilestorage.services.impl;
 
 import com.example.cloudfilestorage.domain.exceptions.FileDeleteException;
+import com.example.cloudfilestorage.domain.exceptions.FileRenameException;
 import com.example.cloudfilestorage.domain.exceptions.FileUploadException;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.services.FileService;
@@ -28,12 +29,17 @@ public class FileSystemServiceImpl implements FileSystemService {
     @Transactional
     @Override
     public void renameFileByPath(String path, String name) {
-        String fileType = path.substring(path.lastIndexOf("."));
-        String updatedPath = path.substring(0, path.lastIndexOf("/")) + "/" + name + fileType;
-        fileService.renameFileByPath(path, name, updatedPath); // update file in db
-        InputStream inputStream = getFile(path); // get file from minio
-        deleteFile(path); // delete file in minio
-        saveFile(inputStream, updatedPath); // save the same file in minio but with updated path
+        try {
+            String fileType = path.substring(path.lastIndexOf("."));
+            name = name + fileType; // new name with file type
+            String updatedPath = path.substring(0, path.lastIndexOf("/")) + "/" + name;
+            fileService.renameFileByPath(path, name, updatedPath); // update file in db
+            InputStream inputStream = getFile(path); // get file from minio
+            deleteFile(path); // delete file in minio
+            saveFile(inputStream, updatedPath); // save the same file in minio but with updated path
+        } catch (Exception e) {
+            throw new FileRenameException("File rename failed " + e.getMessage());
+        }
     }
 
     @Transactional
