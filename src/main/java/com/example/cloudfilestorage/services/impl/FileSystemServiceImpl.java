@@ -30,13 +30,13 @@ public class FileSystemServiceImpl implements FileSystemService {
     @Override
     public void renameFileByPath(String path, String name) {
         try {
+            System.out.println(path);
             String fileType = path.substring(path.lastIndexOf("."));
             name = name + fileType; // new name with file type
             String updatedPath = path.substring(0, path.lastIndexOf("/")) + "/" + name;
             fileService.renameFileByPath(path, name, updatedPath); // update file in db
-            InputStream inputStream = getFile(path); // get file from minio
+            copyFile(path, updatedPath); // copy file in minio and put in the new path
             deleteFile(path); // delete file in minio
-            saveFile(inputStream, updatedPath); // save the same file in minio but with updated path
         } catch (Exception e) {
             throw new FileRenameException("File rename failed " + e.getMessage());
         }
@@ -118,10 +118,14 @@ public class FileSystemServiceImpl implements FileSystemService {
     }
 
     @SneakyThrows
-    public InputStream getFile(String path) {
-        return minioClient.getObject(GetObjectArgs.builder()
+    public void copyFile(String oldPath, String updatedPath) {
+        minioClient.copyObject(CopyObjectArgs.builder()
                 .bucket(minioProperties.getBucket())
-                .object(path)
+                .object(updatedPath)
+                .source(CopySource.builder()
+                        .bucket(minioProperties.getBucket())
+                        .object(oldPath)
+                        .build())
                 .build());
     }
 }
