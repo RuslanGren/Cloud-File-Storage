@@ -10,5 +10,7 @@ public interface FileService {
 
     void renameFileByPath(String path, String name, String updatedPath);
 
+    boolean existByName(String name);
+
     File getByPath(String path);
 }

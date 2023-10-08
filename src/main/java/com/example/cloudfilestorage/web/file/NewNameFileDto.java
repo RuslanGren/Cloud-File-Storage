@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NewNameFileDto {
     @NotBlank(message = "New name should not be empty!")
-    @Size(min = 4, max = 15, message = "New name should be between 4 and 15 characters")
+    @Size(max = 32, message = "New name should be at most 32 characters")
     private String name;
 }

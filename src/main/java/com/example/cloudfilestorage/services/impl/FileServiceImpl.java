@@ -14,6 +14,11 @@ public class FileServiceImpl implements FileService {
     private final FileRepository fileRepository;
 
     @Override
+    public boolean existByName(String name) {
+        return fileRepository.existsByName(name);
+    }
+
+    @Override
     public void createNewFile(String name, Folder folder, String path, String url) {
         File file = File.builder()
                 .name(name)

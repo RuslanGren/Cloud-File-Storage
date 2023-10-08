@@ -64,6 +64,12 @@ public class FileSystemServiceImpl implements FileSystemService {
             throw new FileUploadException("File must have name");
         }
         String fileName = file.getOriginalFilename();
+        if (fileName.contains(" ")) {
+            throw new FileUploadException("File should not contain spaces");
+        }
+        if (fileService.existByName(fileName)) {
+            throw new FileUploadException("File with the same name already exists");
+        }
         Folder rootFolder = folderService.getFolderByPath(path); // get folder for file
         path = path + fileName; // path folder + fileName
         String url = minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + path;

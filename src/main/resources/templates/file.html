@@ -15,6 +15,7 @@
     <input type="hidden" name="_method" value="PATCH">
     <br>
     <button type="submit">Rename</button>
+    <div th:if="${error_name}" style="color:red" th:text="${error_name}"></div>
 </form>
 <br>
 <form th:method="post" th:action="@{/delete/{path}(path=${file.getPath()})}">

@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Objects;
-
 @Controller
 @RequiredArgsConstructor
 public class MainController {
@@ -85,10 +83,19 @@ public class MainController {
 
     @PatchMapping("/rename-file/**")
     public String renameFile(@ModelAttribute("newNameFileDto") @Valid NewNameFileDto newNameFileDto,
-                             HttpServletRequest request, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+                             HttpServletRequest request,
+                             BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes) {
         String path = request.getRequestURL().toString().split("/rename-file/")[1];
-        fileSystemService.renameFileByPath(path, newNameFileDto.getName());
 
-        return String.format("redirect:/search/%s/", path.substring(0, path.lastIndexOf("/")));
+        if (bindingResult.hasErrors()) {
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                redirectAttributes.addFlashAttribute("error_" + error.getField(), error.getDefaultMessage());
+            }
+            return "redirect:/select/" + path;
+        } else {
+            fileSystemService.renameFileByPath(path, newNameFileDto.getName());
+            return String.format("redirect:/search/%s/", path.substring(0, path.lastIndexOf("/")));
+        }
     }
 }
