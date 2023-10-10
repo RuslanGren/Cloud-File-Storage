@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title th:text="${folder.getName()}"></title>
 </head>
 <body>
+<div id="user_logout">
+    Authenticated as <span sec:authentication="name"></span>
+    <form id="logout_form"  method="post" th:action="@{/logout}">
+        <button type="submit">Sign out</button>
+    </form>
+</div>
 <form method="post" th:action="@{/upload}" enctype="multipart/form-data">
     <div class="form-group">
         <label>Choose file:</label>

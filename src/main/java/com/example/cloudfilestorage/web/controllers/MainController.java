@@ -3,11 +3,14 @@ package com.example.cloudfilestorage.web.controllers;
 import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.FileSystemService;
 import com.example.cloudfilestorage.services.FolderService;
+import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.file.FolderDto;
 import com.example.cloudfilestorage.web.file.NewNameFileDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,10 +25,12 @@ public class MainController {
     private final FileService fileService;
     private final FileSystemService fileSystemService;
     private final FolderService folderService;
+    private final UserService userService;
 
     @GetMapping("/main")
-    public String displayMainPage() {
-        return "main";
+    public String displayMainPage(@AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = userService.getByUsername(userDetails.getUsername()).getId();
+        return String.format("redirect:/search/user-%d-files/", userId);
     }
 
     @PostMapping("/upload")
