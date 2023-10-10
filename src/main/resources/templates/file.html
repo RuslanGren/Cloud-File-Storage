@@ -3,25 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${file.getName()}"></title>
+    <style>
+        /* Загальні стилі для сторінки */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        /* Стилі для блоку з деталями файлу */
+        .file-details {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 20px;
+        }
+
+        .download-button {
+            margin-top: 10px;
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .download-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Стилі для розділу "Rename file" */
+        .rename-section {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 20px;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        .rename-button {
+            background-color: #007bff;
+            color: #fff;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .rename-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<p>name: <a th:href="${file.getUrl()}" th:text="${file.getName()}" download>text</a></p>
-<a th:href="${file.getUrl()}">Download</a>
-<br><br>
-<p>Rename file:</p>
-<form th:object="${newNameFileDto}" th:action="@{/rename-file}" method="post">
-    <label for="name">New Name:</label>
-    <input type="text" id="name" th:field="*{name}" required>
-    <input type="hidden" name="path" th:value="${file.getPath()}" th:attr="name='path'">
-    <input type="hidden" name="_method" value="PATCH">
-    <div th:if="${error_name}" style="color:red" th:text="${error_name}"></div>
-    <br>
-    <button type="submit">Rename</button>
-</form>
-<br>
-<form th:method="post" th:action="@{/delete/{path}(path=${file.getPath()})}">
-    <input type="hidden" name="_method" value="DELETE">
-    <input type="submit" value="Delete">
-</form>
+<div class="file-details">
+    <p>Name: <a th:href="${file.getUrl()}" th:text="${file.getName()}" download>Download</a></p>
+    <a th:href="${file.getUrl()}" class="download-button">Download</a>
+</div>
+
+<div class="rename-section">
+    <p>Rename file:</p>
+    <form th:object="${newNameFileDto}" th:action="@{/rename-file}" method="post">
+        <label for="name">New Name:</label>
+        <input type="text" id="name" th:field="*{name}" required>
+        <input type="hidden" name="path" th:value="${file.getPath()}" th:attr="name='path'">
+        <input type="hidden" name="_method" value="PATCH">
+        <div th:if="${error_name}" class="error-message" th:text="${error_name}"></div>
+        <br>
+        <button type="submit" class="rename-button">Rename</button>
+    </form>
+    <p>Delete file:</p>
+    <form th:method="post" th:action="@{/delete/{path}(path=${file.getPath()})}">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="Delete" class="delete-button">
+    </form>
+</div>
 </body>
 </html>
