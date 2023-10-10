@@ -81,21 +81,24 @@ public class MainController {
         // get path of the folder and go to the folder where the file was located
     }
 
-    @PatchMapping("/rename-file/**")
+    @PatchMapping("/rename-file")
     public String renameFile(@ModelAttribute("newNameFileDto") @Valid NewNameFileDto newNameFileDto,
-                             HttpServletRequest request,
                              BindingResult bindingResult,
                              RedirectAttributes redirectAttributes) {
-        String path = request.getRequestURL().toString().split("/rename-file/")[1];
-
+        String path = newNameFileDto.getPath();
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
-                redirectAttributes.addFlashAttribute("error_" + error.getField(), error.getDefaultMessage());
+                redirectAttributes.addFlashAttribute("error_name", error.getDefaultMessage());
             }
-            return "redirect:/select/" + path;
         } else {
-            fileSystemService.renameFileByPath(path, newNameFileDto.getName());
-            return String.format("redirect:/search/%s/", path.substring(0, path.lastIndexOf("/")));
+            try {
+                fileSystemService.renameFileByPath(path, newNameFileDto.getName());
+                // if everything is ok, file renamed and go to the folder
+                return String.format("redirect:/search/%s/", path.substring(0, path.lastIndexOf("/")));
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error_name", e.getMessage());
+            }
         }
+        return "redirect:/select/" + path;
     }
 }

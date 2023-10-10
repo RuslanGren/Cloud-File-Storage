@@ -29,10 +29,14 @@ public class FileSystemServiceImpl implements FileSystemService {
     @Transactional
     @Override
     public void renameFileByPath(String path, String name) {
+        String oldName = path.substring(path.lastIndexOf("/") + 1);
+        String fileType = path.substring(path.lastIndexOf("."));
+        name = name + fileType; // new name with file type
+        if (oldName.equals(name)) {
+            throw new FileRenameException("Name must be different");
+        }
+        String updatedPath = path.substring(0, path.lastIndexOf("/")) + "/" + name;
         try {
-            String fileType = path.substring(path.lastIndexOf("."));
-            name = name + fileType; // new name with file type
-            String updatedPath = path.substring(0, path.lastIndexOf("/")) + "/" + name;
             fileService.renameFileByPath(path, name, updatedPath); // update file in db
             copyFile(path, updatedPath); // copy file in minio and put with the new path
             deleteFile(path); // delete file with old path in minio

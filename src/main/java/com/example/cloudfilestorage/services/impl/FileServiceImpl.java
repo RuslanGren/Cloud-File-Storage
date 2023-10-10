@@ -1,6 +1,7 @@
 package com.example.cloudfilestorage.services.impl;
 
 import com.example.cloudfilestorage.domain.exceptions.FileNotFoundException;
+import com.example.cloudfilestorage.domain.exceptions.FileRenameException;
 import com.example.cloudfilestorage.domain.file.File;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.repository.FileRepository;
