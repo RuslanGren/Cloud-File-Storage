@@ -3,39 +3,223 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${folder.getName()}"></title>
+    <title>My files</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            text-align: center;
+        }
+
+        #left-content {
+            width: 20%;
+            background-color: #333333;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #left-content h2 {
+            color: #fff;
+        }
+
+        .right-content {
+            flex: 1;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        hr {
+            width: 80%;
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .upload-section-text {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        label {
+            margin-top: 20px;
+        }
+
+        input[type="file"] {
+            margin: 15px;
+            width: 200px;
+            height: 200px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .file a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .file a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .form-group {
+            margin: 15px;
+        }
+
+        .create-folder-form {
+            margin: 15px;
+        }
+
+        #create-folder-btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #create-folder-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .upload-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .file-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .folder, .file {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            width: 120px;
+        }
+
+        .folder img, .file img {
+            width: 64px;
+            height: 64px;
+        }
+
+        .folder p, .file p {
+            margin-top: 5px;
+            font-family: Arial, sans-serif;
+            color: #333;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            padding-bottom: 0;
+        }
+    </style>
 </head>
 <body>
-<div id="user_logout">
-    Authenticated as <span sec:authentication="name"></span>
-    <form id="logout_form"  method="post" th:action="@{/logout}">
+<div id="left-content">
+    <h2>Authenticated As</h2>
+    <span sec:authentication="name"></span>
+    <form id="logout_form" method="post" th:action="@{/logout}">
         <button type="submit">Sign out</button>
     </form>
-</div>
-<form method="post" th:action="@{/upload}" enctype="multipart/form-data">
-    <div class="form-group">
-        <label>Choose file:</label>
-        <input type="file" name="file">
+
+    <div class="upload-section">
+        <div class="upload-section-text">
+            <h2>Upload File</h2>
+            <form method="post" th:action="@{/upload}" enctype="multipart/form-data" class="form-group">
+                <label>Choose file:</label>
+                <input type="file" name="file">
+                <input type="hidden" name="path" th:value="${folder.getPath()}">
+                <button type="submit">Upload</button>
+                <div th:if="${error}" class="error" th:text="${error}"></div>
+            </form>
+        </div>
+
+        <hr>
+
+        <div>
+            <h2>Create Folder</h2>
+            <form th:object="${folderDto}" th:action="@{/folder-create}" method="post" class="create-folder-form">
+                <label for="folder_name">Folder Name:</label>
+                <input type="text" id="folder_name" name="folder_name" th:field="*{name}" required>
+                <input type="hidden" id="folder_path" name="folder_path" th:value="${folder.getPath()}" th:attr="name='path'">
+                <button id="create-folder-btn" type="submit">Create</button>
+                <div th:if="${error_name}" class="error" th:text="${error_name}"></div>
+            </form>
+        </div>
     </div>
-    <!-- path -->
-    <input type="hidden" name="path" th:value="${folder.getPath()}">
-    <button type="submit">Upload file</button>
-    <div th:if="${error}" style="color:red" th:text="${error}"></div>
-</form>
-<br>
-<form th:object="${folderDto}" th:action="@{/folder-create}" method="post">
-    <label for="folder_name">Folder Name:</label>
-    <input type="text" id="folder_name" name="folder_name" th:field="*{name}" required>
-    <input type="hidden" id="folder_path" name="folder_path" th:value="${folder.getPath()}" th:attr="name='path'">
-    <input type="submit" value="Create folder">
-    <div th:if="${error_name}" style="color:red" th:text="${error_name}"></div>
-</form>
-<br>
-<div th:each="subFolder : ${folder.getSubFolders()}">
-    <p class="file">Folder: <a th:href="@{/search/{path}(path=${subFolder.getPath()})}" th:text="${subFolder.getName()}">text</a></p>
 </div>
-<div th:each="file : ${folder.getFiles()}">
-    <p class="file">File: <a th:href="@{/select/{path}(path=${file.getPath()})}" th:text="${file.getName()}">text</a></p>
+
+<div class="right-content">
+    <h2>My Files:</h2>
+    <div class="file-container">
+    <div th:each="subFolder : ${folder.getSubFolders()}" class="folder">
+        <a th:href="@{/search/{path}(path=${subFolder.getPath()})}">
+            <img th:src="@{/img/folder.png}">
+            <p th:text="${subFolder.getName()}"></p>
+        </a>
+    </div>
+
+    <div th:each="file : ${folder.getFiles()}" class="file">
+        <a th:href="@{/select/{path}(path=${file.getPath()})}">
+            <img th:src="@{/img/file.png}">
+            <p  th:text="${file.getName()}"></p>
+        </a>
+    </div>
+        </div>
 </div>
 </body>
 </html>
