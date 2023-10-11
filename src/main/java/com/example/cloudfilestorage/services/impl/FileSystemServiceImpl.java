@@ -3,6 +3,7 @@ package com.example.cloudfilestorage.services.impl;
 import com.example.cloudfilestorage.domain.exceptions.FileDeleteException;
 import com.example.cloudfilestorage.domain.exceptions.FileRenameException;
 import com.example.cloudfilestorage.domain.exceptions.FileUploadException;
+import com.example.cloudfilestorage.domain.exceptions.FolderCreateException;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.FileSystemService;
@@ -29,6 +30,9 @@ public class FileSystemServiceImpl implements FileSystemService {
     @Transactional
     @Override
     public void renameFileByPath(String path, String name) {
+        if (name.contains(" ")) {
+            throw new FileRenameException("File should not contain spaces");
+        }
         String oldName = path.substring(path.lastIndexOf("/") + 1);
         String fileType = path.substring(path.lastIndexOf("."));
         name = name + fileType; // new name with file type
@@ -90,10 +94,13 @@ public class FileSystemServiceImpl implements FileSystemService {
     @Transactional
     @Override
     public void createSubFolder(String name, String path) {
+        if (name.contains(" ")) {
+            throw new FileRenameException("Folder should not contain spaces");
+        }
         try {
             folderService.createSubFolder(name, path);
         } catch (Exception e) {
-            throw new FileUploadException("Folder create failed" + e.getMessage());
+            throw new FolderCreateException("Folder create failed" + e.getMessage());
         }
     }
 

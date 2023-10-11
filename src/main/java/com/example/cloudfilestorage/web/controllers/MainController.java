@@ -53,10 +53,14 @@ public class MainController {
             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
-                redirectAttributes.addFlashAttribute("error_" + error.getField(), error.getDefaultMessage());
+                redirectAttributes.addFlashAttribute("error_name", error.getDefaultMessage());
             }
         } else {
-            fileSystemService.createSubFolder(folderDto.getName(), folderDto.getPath());
+            try {
+                fileSystemService.createSubFolder(folderDto.getName(), folderDto.getPath());
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error_name", e.getMessage());
+            }
         }
         return "redirect:/search/" + folderDto.getPath();
     }
