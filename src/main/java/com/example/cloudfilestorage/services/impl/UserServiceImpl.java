@@ -4,10 +4,12 @@ import com.example.cloudfilestorage.domain.exceptions.UserNotFoundException;
 import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.repository.UserRepository;
+import com.example.cloudfilestorage.services.FolderService;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.mappers.UserMapper;
 import com.example.cloudfilestorage.web.user.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +38,7 @@ public class  UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User create(UserDto userDto) {
+    public User createNewUser(UserDto userDto) {
         User user = userMapper.toEntity(userDto);
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new CustomBadRequestException("User already exists");
@@ -50,5 +52,12 @@ public class  UserServiceImpl implements UserService {
     @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public String getUserFolder(UserDetails userDetails) {
+        return String.format(
+                "user-%d-files", userRepository.findByUsername(userDetails.getUsername()).orElseThrow().getId());
     }
 }

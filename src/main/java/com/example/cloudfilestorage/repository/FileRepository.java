@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
-    Optional<File> findByPath(String path);
+    Optional<File> findByPathAndUserFolder(String path, String userFolder);
 
     boolean existsByName(String name);
 }

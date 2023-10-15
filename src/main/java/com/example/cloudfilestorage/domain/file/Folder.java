@@ -20,6 +20,7 @@ public class Folder {
     private Long id;
     private String name;
     private String path;
+    private String userFolder;
 
     @OneToMany(mappedBy = "folder")
     private List<File> files;

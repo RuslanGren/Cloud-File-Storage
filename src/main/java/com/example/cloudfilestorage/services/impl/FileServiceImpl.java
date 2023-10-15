@@ -1,7 +1,6 @@
 package com.example.cloudfilestorage.services.impl;
 
 import com.example.cloudfilestorage.domain.exceptions.FileNotFoundException;
-import com.example.cloudfilestorage.domain.exceptions.FileRenameException;
 import com.example.cloudfilestorage.domain.file.File;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.repository.FileRepository;
@@ -20,19 +19,20 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void createNewFile(String name, Folder folder, String path, String url) {
+    public void createNewFile(String name, Folder folder, String path, String url, String userFolder) {
         File file = File.builder()
                 .name(name)
                 .path(path)
                 .url(url)
                 .folder(folder)
+                .userFolder(userFolder)
                 .build();
         fileRepository.save(file);
     }
 
     @Override
-    public void renameFileByPath(String path, String name, String updatedPath) {
-        File file = fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
+    public void renameFileByPath(String path, String name, String updatedPath, String userFolder) {
+        File file = fileRepository.findByPathAndUserFolder(path, userFolder).orElseThrow(FileNotFoundException::new);
         file.setName(name);
         file.setPath(updatedPath);
         file.setUrl(String.format("%s/%s", file.getUrl().substring(0, file.getUrl().lastIndexOf("/")), name));
@@ -40,13 +40,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void deleteFileByPath(String path) {
-        File file = fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
+    public void deleteFileByPath(String path, String userFolder) {
+        File file = fileRepository.findByPathAndUserFolder(path, userFolder).orElseThrow(FileNotFoundException::new);
         fileRepository.delete(file);
     }
 
     @Override
-    public File getByPath(String path) {
-        return fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
+    public File getByPath(String path, String userFolder) {
+        return fileRepository.findByPathAndUserFolder(path, userFolder).orElseThrow(FileNotFoundException::new);
     }
 }

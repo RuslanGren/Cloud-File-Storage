@@ -1,9 +1,6 @@
 package com.example.cloudfilestorage.web.controllers;
 
-import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.FileSystemService;
-import com.example.cloudfilestorage.services.FolderService;
-import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.file.FolderDto;
 import com.example.cloudfilestorage.web.file.NewNameFileDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,24 +19,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequiredArgsConstructor
 public class MainController {
-    private final FileService fileService;
     private final FileSystemService fileSystemService;
-    private final FolderService folderService;
-    private final UserService userService;
-
-    @GetMapping("/main")
-    public String displayMainPage(@AuthenticationPrincipal UserDetails userDetails) {
-        Long userId = userService.getByUsername(userDetails.getUsername()).getId();
-        return String.format("redirect:/search/user-%d-files/", userId);
-    }
 
     @PostMapping("/upload")
     public String uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam("path") String path,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            fileSystemService.upload(file, path);
+            fileSystemService.upload(file, path, userDetails);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
@@ -50,14 +39,15 @@ public class MainController {
     public String createNewFolder(
             @ModelAttribute("package") @Valid FolderDto folderDto,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal UserDetails userDetails) {
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 redirectAttributes.addFlashAttribute("error_name", error.getDefaultMessage());
             }
         } else {
             try {
-                fileSystemService.createSubFolder(folderDto.getName(), folderDto.getPath());
+                fileSystemService.createSubFolder(folderDto.getName(), folderDto.getPath(), userDetails);
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute("error_name", e.getMessage());
             }
@@ -66,25 +56,29 @@ public class MainController {
     }
 
     @GetMapping("/search/**")
-    public String getFolder(HttpServletRequest request, Model model) {
+    public String getFolder(HttpServletRequest request,
+                            Model model,
+                            @AuthenticationPrincipal UserDetails userDetails) {
         String path = request.getRequestURL().toString().split("/search/")[1];
+        model.addAttribute("folder", fileSystemService.getFolderByPath(path, userDetails));
         model.addAttribute("folderDto", new FolderDto());
-        model.addAttribute("folder", folderService.getFolderByPath(path));
         return "folder";
     }
 
     @GetMapping("/select/**")
-    public String getFile(HttpServletRequest request, Model model) {
+    public String getFile(HttpServletRequest request,
+                          Model model,
+                          @AuthenticationPrincipal UserDetails userDetails) {
         String path = request.getRequestURL().toString().split("/select/")[1];
+        model.addAttribute("file", fileSystemService.getFileByPath(path, userDetails));
         model.addAttribute("newNameFileDto", new NewNameFileDto());
-        model.addAttribute("file", fileService.getByPath(path));
         return "file";
     }
 
     @DeleteMapping("/delete/**")
-    public String deleteFile(HttpServletRequest request) {
+    public String deleteFile(HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
         String path = request.getRequestURL().toString().split("/delete/")[1];
-        fileSystemService.deleteFileByPath(path);
+        fileSystemService.deleteFileByPath(path, userDetails);
 
         return String.format("redirect:/search/%s/", path.substring(0, path.lastIndexOf("/")));
         // get path of the folder and go to the folder where the file was located
@@ -93,7 +87,8 @@ public class MainController {
     @PatchMapping("/rename-file")
     public String renameFile(@ModelAttribute("newNameFileDto") @Valid NewNameFileDto newNameFileDto,
                              BindingResult bindingResult,
-                             RedirectAttributes redirectAttributes) {
+                             RedirectAttributes redirectAttributes,
+                             @AuthenticationPrincipal UserDetails userDetails) {
         String path = newNameFileDto.getPath();
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
@@ -101,7 +96,7 @@ public class MainController {
             }
         } else {
             try {
-                fileSystemService.renameFileByPath(path, newNameFileDto.getName());
+                fileSystemService.renameFileByPath(path, newNameFileDto.getName(), userDetails);
                 // if everything is ok, file renamed and go to the folder
                 return String.format("redirect:/search/%s/", path.substring(0, path.lastIndexOf("/")));
             } catch (Exception e) {

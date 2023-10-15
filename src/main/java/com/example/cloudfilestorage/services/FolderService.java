@@ -4,9 +4,9 @@ import com.example.cloudfilestorage.domain.file.Folder;
 
 public interface FolderService {
 
-    void createRootFolder(String name);
+    void createRootFolder(Long userId);
 
-    void createSubFolder(String name, String path);
+    void createSubFolder(String name, String path, String userFolder);
 
-    Folder getFolderByPath(String path);
+    Folder getFolderByPath(String path, String userFolder);
 }

@@ -43,10 +43,9 @@ public class UserController {
             return "register";
         }
         try {
-            userService.create(userDto);
-            String rootFolderName = String.format("user-%d-files", userService.getByUsername(userDto.getUsername()).getId());
-            folderService.createRootFolder(rootFolderName);
-            return "redirect:/main";
+            Long userId = userService.createNewUser(userDto).getId();
+            folderService.createRootFolder(userId);
+            return "redirect:/search/root/";
         } catch (CustomBadRequestException e) {
             model.addAttribute("error", e.getMessage());
             return "register";

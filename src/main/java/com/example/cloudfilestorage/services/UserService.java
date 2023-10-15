@@ -2,6 +2,7 @@ package com.example.cloudfilestorage.services;
 
 import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.web.user.UserDto;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserService {
 
@@ -9,7 +10,9 @@ public interface UserService {
 
     User getByUsername(String username);
 
-    User create(UserDto userDto);
+    User createNewUser(UserDto userDto);
 
     void delete(Long id);
+
+    String getUserFolder(UserDetails userDetails);
 }

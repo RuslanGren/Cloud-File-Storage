@@ -5,6 +5,7 @@ import com.example.cloudfilestorage.repository.FolderRepository;
 import com.example.cloudfilestorage.services.FolderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,21 +15,24 @@ public class FolderServiceImpl implements FolderService {
     private final FolderRepository folderRepository;
 
     @Override
-    public void createRootFolder(String name) {
+    public void createRootFolder(Long userId) {
         Folder folder = Folder.builder()
-                .name(name)
-                .path(name + "/")
+                .name("root")
+                .path("root/")
+                .userFolder("user-" + userId + "-files")
                 .build();
         folderRepository.save(folder);
     }
 
+    @Transactional
     @Override
-    public void createSubFolder(String name, String path) {
-        Folder rootFolder = folderRepository.findByPath(path);
+    public void createSubFolder(String name, String path, String userFolder) {
+        Folder rootFolder = folderRepository.findByPathAndUserFolder(path, userFolder);
 
         Folder subFolder = Folder.builder()
                 .name(name)
                 .path(path + name + "/")
+                .userFolder(userFolder)
                 .build();
 
         // save subfolder in db
@@ -42,7 +46,7 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public Folder getFolderByPath(String path) {
-        return folderRepository.findByPath(path);
+    public Folder getFolderByPath(String path, String userFolder) {
+        return folderRepository.findByPathAndUserFolder(path, userFolder);
     }
 }

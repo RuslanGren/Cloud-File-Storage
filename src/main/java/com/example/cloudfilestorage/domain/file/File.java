@@ -18,6 +18,7 @@ public class File {
     private Long id;
     private String name;
     private String path;
+    private String userFolder;
     private String url;
 
     @ManyToOne
