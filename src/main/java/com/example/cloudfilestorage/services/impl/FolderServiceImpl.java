@@ -17,11 +17,11 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public void createRootFolder(Long userId) {
-        String name = "user-" + userId + "-files";
+        String userFolder = "user-" + userId + "-files";
         Folder folder = Folder.builder()
-                .name(name)
-                .path(name + "/")
-                .localePath("")
+                .name("root")
+                .path(userFolder + "/root/")
+                .localePath("root/")
                 .build();
         folderRepository.save(folder);
     }

@@ -27,15 +27,13 @@ public class MainController {
     public String uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam("path") String path,
-            RedirectAttributes redirectAttributes,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            RedirectAttributes redirectAttributes) {
         try {
-            path = userService.getUserFolder(userDetails) + path;
             fileSystemService.upload(file, path);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/search/" + path;
+        return "redirect:/search/" + path.substring(path.indexOf("/") + 1);
     }
 
     @PostMapping("/folder-create")
@@ -85,7 +83,7 @@ public class MainController {
         String filePath = request.getRequestURL().toString().split("/delete")[1];
         fileSystemService.deleteFileByPath(userService.getUserFolder(userDetails) + filePath);
 
-        return String.format("redirect:/search/%s/", filePath.substring(0, filePath.lastIndexOf("/")));
+        return String.format("redirect:/search/%s/", filePath.substring(1, filePath.lastIndexOf("/")));
         // get path of the folder and go to the folder where the file was located
     }
 
@@ -102,11 +100,11 @@ public class MainController {
             try {
                 fileSystemService.renameFileByPath(path, newNameFileDto.getName());
                 // if everything is ok, file renamed and go to the folder
-                return String.format("redirect:/search/%s/", path.substring(0, path.lastIndexOf("/")));
+                return String.format("redirect:/search/%s/", path.substring(path.indexOf("/") + 1, path.lastIndexOf("/")));
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute("error_name", e.getMessage());
             }
         }
-        return "redirect:/select/" + path;
+        return "redirect:/select/" + path.substring(path.indexOf("/") + 1);
     }
 }

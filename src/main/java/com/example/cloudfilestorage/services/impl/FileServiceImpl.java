@@ -23,7 +23,7 @@ public class FileServiceImpl implements FileService {
         File file = File.builder()
                 .name(name)
                 .path(path)
-                .localePath(folder.getLocalePath())
+                .localePath(folder.getLocalePath() + name)
                 .url(url)
                 .folder(folder)
                 .build();
@@ -35,6 +35,7 @@ public class FileServiceImpl implements FileService {
         File file = fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
         file.setName(name);
         file.setPath(updatedPath);
+        file.setLocalePath(updatedPath.substring(updatedPath.indexOf("/") + 1));
         file.setUrl(String.format("%s/%s", file.getUrl().substring(0, file.getUrl().lastIndexOf("/")), name));
         fileRepository.save(file);
     }

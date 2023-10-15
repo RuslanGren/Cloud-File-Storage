@@ -80,7 +80,7 @@
         <button type="submit" class="rename-button">Rename</button>
     </form>
     <p>Delete file:</p>
-    <form th:method="post" th:action="@{/delete/{path}(path=${file.getPath()})}">
+    <form th:method="post" th:action="@{/delete/{path}(path=${file.getLocalePath()})}">
         <input type="hidden" name="_method" value="DELETE">
         <input type="submit" value="Delete" class="delete-button">
     </form>

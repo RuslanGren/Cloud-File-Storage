@@ -45,7 +45,7 @@ public class UserController {
         try {
             Long userId = userService.createNewUser(userDto).getId();
             folderService.createRootFolder(userId);
-            return "redirect:/search/";
+            return "redirect:/search/root/";
         } catch (CustomBadRequestException e) {
             model.addAttribute("error", e.getMessage());
             return "register";
