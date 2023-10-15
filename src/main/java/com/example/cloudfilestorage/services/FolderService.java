@@ -6,7 +6,7 @@ public interface FolderService {
 
     void createRootFolder(Long userId);
 
-    void createSubFolder(String name, String path, String userFolder);
+    void createSubFolder(String name, String path);
 
-    Folder getFolderByPath(String path, String userFolder);
+    Folder getFolderByPath(String path);
 }

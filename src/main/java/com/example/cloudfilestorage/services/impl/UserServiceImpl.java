@@ -4,7 +4,6 @@ import com.example.cloudfilestorage.domain.exceptions.UserNotFoundException;
 import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.repository.UserRepository;
-import com.example.cloudfilestorage.services.FolderService;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.mappers.UserMapper;
 import com.example.cloudfilestorage.web.user.UserDto;

@@ -7,15 +7,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileSystemService {
 
-    void upload(MultipartFile multipartFile, String path, UserDetails userDetails);
+    void upload(MultipartFile multipartFile, String path);
 
-    void createSubFolder(String name, String path, UserDetails userDetails);
+    void createSubFolder(String name, String path);
 
-    void deleteFileByPath(String path, UserDetails userDetails);
+    void deleteFileByPath(String path);
 
-    void renameFileByPath(String path, String name, UserDetails userDetails);
+    void renameFileByPath(String path, String name);
 
-    Folder getFolderByPath(String path, UserDetails userDetails);
+    Folder getFolderByPath(String path);
 
-    File getFileByPath(String path, UserDetails userDetails);
+    File getFileByPath(String path);
 }

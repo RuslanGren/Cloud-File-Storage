@@ -1,5 +1,6 @@
 package com.example.cloudfilestorage.services.impl;
 
+import com.example.cloudfilestorage.domain.exceptions.FolderCreateException;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.repository.FolderRepository;
 import com.example.cloudfilestorage.services.FolderService;
@@ -16,37 +17,42 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public void createRootFolder(Long userId) {
+        String name = "user-" + userId + "-files";
         Folder folder = Folder.builder()
-                .name("root")
-                .path("root/")
-                .userFolder("user-" + userId + "-files")
+                .name(name)
+                .path(name + "/")
+                .localePath("")
                 .build();
         folderRepository.save(folder);
     }
 
     @Transactional
     @Override
-    public void createSubFolder(String name, String path, String userFolder) {
-        Folder rootFolder = folderRepository.findByPathAndUserFolder(path, userFolder);
+    public void createSubFolder(String name, String path) {
+        Folder rootFolder = folderRepository.findByPath(path);
+        List<Folder> subFolders = rootFolder.getSubFolders();
+
+        if (subFolders.stream().anyMatch(subFolder -> subFolder.getName().equals(name))) {
+            throw new FolderCreateException("There is already a folder with this name in this location");
+        }
 
         Folder subFolder = Folder.builder()
                 .name(name)
                 .path(path + name + "/")
-                .userFolder(userFolder)
+                .localePath(rootFolder.getLocalePath() + name + "/")
                 .build();
 
         // save subfolder in db
         folderRepository.save(subFolder);
         // add subfolder in rootfolder
-        List<Folder> updatedSubFoldersList = rootFolder.getSubFolders();
-        updatedSubFoldersList.add(subFolder);
-        rootFolder.setSubFolders(updatedSubFoldersList);
+        subFolders.add(subFolder);
+        rootFolder.setSubFolders(subFolders);
         // save rootfolder after update
         folderRepository.save(rootFolder);
     }
 
     @Override
-    public Folder getFolderByPath(String path, String userFolder) {
-        return folderRepository.findByPathAndUserFolder(path, userFolder);
+    public Folder getFolderByPath(String path) {
+        return folderRepository.findByPath(path);
     }
 }

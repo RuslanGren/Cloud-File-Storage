@@ -180,14 +180,14 @@
     <h2>My Files:</h2>
     <div class="file-container">
     <div th:each="subFolder : ${folder.getSubFolders()}" class="folder">
-        <a th:href="@{/search/{path}(path=${subFolder.getPath()})}">
+        <a th:href="@{/search/{path}(path=${subFolder.getLocalePath()})}">
             <img th:src="@{/img/folder.png}">
             <p th:text="${subFolder.getName()}"></p>
         </a>
     </div>
 
     <div th:each="file : ${folder.getFiles()}" class="file">
-        <a th:href="@{/select/{path}(path=${file.getPath()})}">
+        <a th:href="@{/select/{path}(path=${file.getLocalePath()})}">
             <img th:src="@{/img/file.png}">
             <p  th:text="${file.getName()}"></p>
         </a>

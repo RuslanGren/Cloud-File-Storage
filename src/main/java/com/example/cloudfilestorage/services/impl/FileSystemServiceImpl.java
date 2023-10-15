@@ -6,12 +6,10 @@ import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.services.FileService;
 import com.example.cloudfilestorage.services.FileSystemService;
 import com.example.cloudfilestorage.services.FolderService;
-import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.services.properties.MinioProperties;
 import io.minio.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,11 +24,10 @@ public class FileSystemServiceImpl implements FileSystemService {
     private final MinioProperties minioProperties;
     private final FileService fileService;
     private final FolderService folderService;
-    private final UserService userService;
 
     @Transactional
     @Override
-    public void renameFileByPath(String path, String name, UserDetails userDetails) {
+    public void renameFileByPath(String path, String name) {
         if (name.contains(" ")) {
             throw new FileRenameException("File should not contain spaces");
         }
@@ -42,8 +39,7 @@ public class FileSystemServiceImpl implements FileSystemService {
         }
         String updatedPath = path.substring(0, path.lastIndexOf("/")) + "/" + name;
         try {
-            String userFolder = userService.getUserFolder(userDetails);
-            fileService.renameFileByPath(path, name, updatedPath, userFolder); // update file in db
+            fileService.renameFileByPath(path, name, updatedPath); // update file in db
             copyFile(path, updatedPath); // copy file in minio and put with the new path
             deleteFile(path); // delete file with old path in minio
         } catch (Exception e) {
@@ -53,10 +49,9 @@ public class FileSystemServiceImpl implements FileSystemService {
 
     @Transactional
     @Override
-    public void deleteFileByPath(String path, UserDetails userDetails) {
+    public void deleteFileByPath(String path) {
         try {
-            String userFolder = userService.getUserFolder(userDetails);
-            fileService.deleteFileByPath(path, userFolder); // delete file in db
+            fileService.deleteFileByPath(path); // delete file in db
             deleteFile(path); // delete file in MinIO
         } catch (Exception e) {
             throw new FileDeleteException("File delete failed " + e.getMessage());
@@ -65,7 +60,7 @@ public class FileSystemServiceImpl implements FileSystemService {
 
     @Transactional
     @Override
-    public void upload(MultipartFile file, String path, UserDetails userDetails) {
+    public void upload(MultipartFile file, String path) {
         try {
             createBucket(); // create bucket in minio
         } catch (Exception e) {
@@ -81,8 +76,7 @@ public class FileSystemServiceImpl implements FileSystemService {
         if (fileService.existByName(fileName)) {
             throw new FileUploadException("File with the same name already exists");
         }
-        String userFolder = userService.getUserFolder(userDetails);
-        Folder rootFolder = folderService.getFolderByPath(path, userFolder); // get folder for file
+        Folder rootFolder = folderService.getFolderByPath(path); // get folder for file
         path = path + fileName; // path folder + fileName
         String url = minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + path;
         InputStream inputStream;
@@ -92,29 +86,27 @@ public class FileSystemServiceImpl implements FileSystemService {
             throw new FileUploadException("File upload failed " + e.getMessage());
         }
         saveFile(inputStream, path);
-        fileService.createNewFile(fileName, rootFolder, path, url, userFolder);
+        fileService.createNewFile(fileName, rootFolder, path, url);
     }
 
     @Transactional
     @Override
-    public void createSubFolder(String name, String path, UserDetails userDetails) {
+    public void createSubFolder(String name, String path) {
         if (name.contains(" ")) {
             throw new FileRenameException("Folder should not contain spaces");
         }
         try {
-            String userFolder = userService.getUserFolder(userDetails);
-            folderService.createSubFolder(name, path, userFolder);
+            folderService.createSubFolder(name, path);
         } catch (Exception e) {
-            throw new FolderCreateException("Folder create failed" + e.getMessage());
+            throw new FolderCreateException(e.getMessage());
         }
     }
 
     @Transactional
     @Override
-    public Folder getFolderByPath(String path, UserDetails userDetails) {
-        String userFolder = userService.getUserFolder(userDetails);
+    public Folder getFolderByPath(String path) {
         try {
-            return folderService.getFolderByPath(path, userFolder);
+            return folderService.getFolderByPath(path);
         } catch (Exception e) {
             throw new FileNotFoundException();
         }
@@ -122,10 +114,9 @@ public class FileSystemServiceImpl implements FileSystemService {
 
     @Transactional
     @Override
-    public File getFileByPath(String path, UserDetails userDetails) {
-        String userFolder = userService.getUserFolder(userDetails);
+    public File getFileByPath(String path) {
         try {
-            return fileService.getByPath(path, userFolder);
+            return fileService.getByPath(path);
         } catch (Exception e) {
             throw new FileNotFoundException();
         }
