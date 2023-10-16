@@ -83,7 +83,7 @@ public class FileSystemServiceImpl implements FileSystemService {
         }
         Folder rootFolder = folderService.getFolderByPath(path); // get folder for file
         path = path + fileName; // path folder + fileName
-        String url = minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/" + path;
+        String url = "http://localhost:9000" + "/" + minioProperties.getBucket() + "/" + path;
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
