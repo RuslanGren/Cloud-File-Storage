@@ -1,6 +1,6 @@
 package com.example.cloudfilestorage.services.impl;
 
-import com.example.cloudfilestorage.domain.exceptions.FileNotFoundException;
+import com.example.cloudfilestorage.domain.exceptions.file.FileNotFoundException;
 import com.example.cloudfilestorage.domain.file.File;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.repository.FileRepository;
@@ -48,6 +48,10 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public File getByPath(String path) {
-        return fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
+        File file = fileRepository.findByPath(path).orElseThrow(FileNotFoundException::new);
+        if (file == null) {
+            throw new FileNotFoundException();
+        }
+        return file;
     }
 }

@@ -1,6 +1,5 @@
 package com.example.cloudfilestorage.web.controllers;
 
-import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.domain.user.User;
 import com.example.cloudfilestorage.services.FolderService;
 import com.example.cloudfilestorage.services.UserService;
@@ -46,7 +45,7 @@ public class UserController {
             Long userId = userService.createNewUser(userDto).getId();
             folderService.createRootFolder(userId);
             return "redirect:/search/root/";
-        } catch (CustomBadRequestException e) {
+        } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "register";
         }

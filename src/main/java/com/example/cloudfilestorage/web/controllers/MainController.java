@@ -1,5 +1,7 @@
 package com.example.cloudfilestorage.web.controllers;
 
+import com.example.cloudfilestorage.domain.exceptions.file.FileNotFoundException;
+import com.example.cloudfilestorage.domain.exceptions.folder.FolderNotFoundException;
 import com.example.cloudfilestorage.services.FileSystemService;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.file.FolderDto;
@@ -22,6 +24,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MainController {
     private final FileSystemService fileSystemService;
     private final UserService userService;
+
+    @GetMapping("/search/")
+    public String emptySearchRequestRedirect() {
+        return "redirect:/search/root/";
+    }
 
     @PostMapping("/upload")
     public String uploadFile(
@@ -61,9 +68,15 @@ public class MainController {
                             @AuthenticationPrincipal UserDetails userDetails) {
         String path = userService.getUserFolder(userDetails) +
                 request.getRequestURL().toString().split("/search")[1];
-        model.addAttribute("folder", fileSystemService.getFolderByPath(path));
-        model.addAttribute("folderDto", new FolderDto());
-        return "folder";
+
+        try {
+            model.addAttribute("folder", fileSystemService.getFolderByPath(path));
+            model.addAttribute("folderDto", new FolderDto());
+            return "folder";
+        } catch (FolderNotFoundException e) {
+            model.addAttribute("error", "Error: Not found a folder at this path");
+            return "error";
+        }
     }
 
     @GetMapping("/select/**")
@@ -72,9 +85,14 @@ public class MainController {
                           @AuthenticationPrincipal UserDetails userDetails) {
         String path = userService.getUserFolder(userDetails) +
                 request.getRequestURL().toString().split("/select")[1];
-        model.addAttribute("file", fileSystemService.getFileByPath(path));
-        model.addAttribute("newNameFileDto", new NewNameFileDto());
-        return "file";
+        try {
+            model.addAttribute("file", fileSystemService.getFileByPath(path));
+            model.addAttribute("newNameFileDto", new NewNameFileDto());
+            return "file";
+        } catch (FileNotFoundException e) {
+            model.addAttribute("error", "Error: Not found a file at this path");
+            return "error";
+        }
     }
 
     @DeleteMapping("/delete/**")

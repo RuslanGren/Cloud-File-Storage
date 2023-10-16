@@ -1,6 +1,11 @@
 package com.example.cloudfilestorage.services.impl;
 
-import com.example.cloudfilestorage.domain.exceptions.*;
+import com.example.cloudfilestorage.domain.exceptions.file.FileDeleteException;
+import com.example.cloudfilestorage.domain.exceptions.file.FileNotFoundException;
+import com.example.cloudfilestorage.domain.exceptions.file.FileRenameException;
+import com.example.cloudfilestorage.domain.exceptions.file.FileUploadException;
+import com.example.cloudfilestorage.domain.exceptions.folder.FolderCreateException;
+import com.example.cloudfilestorage.domain.exceptions.folder.FolderNotFoundException;
 import com.example.cloudfilestorage.domain.file.File;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.services.FileService;
@@ -108,7 +113,7 @@ public class FileSystemServiceImpl implements FileSystemService {
         try {
             return folderService.getFolderByPath(path);
         } catch (Exception e) {
-            throw new FileNotFoundException();
+            throw new FolderNotFoundException();
         }
     }
 

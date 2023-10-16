@@ -1,7 +1,7 @@
 package com.example.cloudfilestorage.config;
 
 import com.example.cloudfilestorage.domain.user.User;
-import com.example.cloudfilestorage.domain.exceptions.UserNotFoundException;
+import com.example.cloudfilestorage.domain.exceptions.user.UserNotFoundException;
 import com.example.cloudfilestorage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

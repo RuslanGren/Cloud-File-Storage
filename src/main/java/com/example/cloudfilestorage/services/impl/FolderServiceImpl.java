@@ -1,6 +1,7 @@
 package com.example.cloudfilestorage.services.impl;
 
-import com.example.cloudfilestorage.domain.exceptions.FolderCreateException;
+import com.example.cloudfilestorage.domain.exceptions.folder.FolderCreateException;
+import com.example.cloudfilestorage.domain.exceptions.folder.FolderNotFoundException;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.repository.FolderRepository;
 import com.example.cloudfilestorage.services.FolderService;
@@ -53,6 +54,10 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public Folder getFolderByPath(String path) {
-        return folderRepository.findByPath(path);
+        Folder folder = folderRepository.findByPath(path);
+        if (folder == null) {
+            throw new FolderNotFoundException();
+        }
+        return folder;
     }
 }

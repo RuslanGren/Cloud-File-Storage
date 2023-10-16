@@ -1,7 +1,6 @@
 package com.example.cloudfilestorage;
 
 import com.example.cloudfilestorage.domain.user.User;
-import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.repository.UserRepository;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.mappers.UserMapper;

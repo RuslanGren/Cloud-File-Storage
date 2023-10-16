@@ -1,8 +1,8 @@
 package com.example.cloudfilestorage.services.impl;
 
-import com.example.cloudfilestorage.domain.exceptions.UserNotFoundException;
+import com.example.cloudfilestorage.domain.exceptions.user.UserAlreadyExistsException;
+import com.example.cloudfilestorage.domain.exceptions.user.UserNotFoundException;
 import com.example.cloudfilestorage.domain.user.User;
-import com.example.cloudfilestorage.domain.exceptions.CustomBadRequestException;
 import com.example.cloudfilestorage.repository.UserRepository;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.mappers.UserMapper;
@@ -40,7 +40,7 @@ public class  UserServiceImpl implements UserService {
     public User createNewUser(UserDto userDto) {
         User user = userMapper.toEntity(userDto);
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new CustomBadRequestException("User already exists");
+            throw new UserAlreadyExistsException();
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
