@@ -19,7 +19,6 @@ public class File {
     private String name;
     private String path;
     private String localePath;
-    private String url;
 
     @ManyToOne
     @JoinColumn(name = "folder_id")

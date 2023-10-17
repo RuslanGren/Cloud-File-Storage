@@ -1,23 +1,28 @@
 package com.example.cloudfilestorage.web.controllers;
 
 import com.example.cloudfilestorage.domain.exceptions.file.FileNotFoundException;
+import com.example.cloudfilestorage.domain.exceptions.file.FileUploadException;
 import com.example.cloudfilestorage.domain.exceptions.folder.FolderNotFoundException;
 import com.example.cloudfilestorage.services.FileSystemService;
 import com.example.cloudfilestorage.services.UserService;
 import com.example.cloudfilestorage.web.file.FolderDto;
 import com.example.cloudfilestorage.web.file.NewNameFileDto;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.InputStream;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,6 +48,21 @@ public class MainController {
         return "redirect:/search/" + path.substring(path.indexOf("/") + 1);
     }
 
+    @GetMapping("/download")
+    public void downloadFile(
+            @RequestParam("path") String path,
+            HttpServletResponse response,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        path = userService.getUserFolder(userDetails) + "/" + path;
+        try (InputStream fileContentStream = fileSystemService.getFileContent(path)) {
+            response.setHeader("Content-Disposition",
+                    String.format("attachment; filename=\"%s\"", path.substring(path.lastIndexOf("/") + 1)));
+            FileCopyUtils.copy(fileContentStream, response.getOutputStream());
+        } catch (Exception e) {
+            throw new FileUploadException(e.getMessage());
+        }
+    }
+
     @PostMapping("/folder-create")
     public String createNewFolder(
             @ModelAttribute("package") @Valid FolderDto folderDto,
@@ -63,9 +83,10 @@ public class MainController {
     }
 
     @GetMapping("/search/**")
-    public String getFolder(HttpServletRequest request,
-                            Model model,
-                            @AuthenticationPrincipal UserDetails userDetails) {
+    public String getFolder(
+            HttpServletRequest request,
+            Model model,
+            @AuthenticationPrincipal UserDetails userDetails) {
         String path = userService.getUserFolder(userDetails) +
                 request.getRequestURL().toString().split("/search")[1];
 
@@ -80,9 +101,10 @@ public class MainController {
     }
 
     @GetMapping("/select/**")
-    public String getFile(HttpServletRequest request,
-                          Model model,
-                          @AuthenticationPrincipal UserDetails userDetails) {
+    public String getFile(
+            HttpServletRequest request,
+            Model model,
+            @AuthenticationPrincipal UserDetails userDetails) {
         String path = userService.getUserFolder(userDetails) +
                 request.getRequestURL().toString().split("/select")[1];
         try {
@@ -96,8 +118,9 @@ public class MainController {
     }
 
     @DeleteMapping("/delete/**")
-    public String deleteFile(HttpServletRequest request,
-                             @AuthenticationPrincipal UserDetails userDetails) {
+    public String deleteFile(
+            HttpServletRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
         String filePath = request.getRequestURL().toString().split("/delete")[1];
         fileSystemService.deleteFileByPath(userService.getUserFolder(userDetails) + filePath);
 
@@ -106,9 +129,10 @@ public class MainController {
     }
 
     @PatchMapping("/rename-file")
-    public String renameFile(@ModelAttribute("newNameFileDto") @Valid NewNameFileDto newNameFileDto,
-                             BindingResult bindingResult,
-                             RedirectAttributes redirectAttributes) {
+    public String renameFile(
+            @ModelAttribute("newNameFileDto") @Valid NewNameFileDto newNameFileDto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         String path = newNameFileDto.getPath();
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {

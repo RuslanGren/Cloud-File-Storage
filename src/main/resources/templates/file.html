@@ -64,8 +64,8 @@
 </head>
 <body>
 <div class="file-details">
-    <p>Name: <a th:href="${file.getUrl()}" th:text="${file.getName()}" download>Download</a></p>
-    <a th:href="${file.getUrl()}" class="download-button">Download</a>
+    <p th:text="${file.getName()}"></p>
+    <a th:href="@{/download(path=${file.getLocalePath()})}" class="download-button">Download</a>
 </div>
 
 <div class="rename-section">

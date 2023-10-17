@@ -5,6 +5,8 @@ import com.example.cloudfilestorage.domain.file.Folder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+
 public interface FileSystemService {
 
     void upload(MultipartFile multipartFile, String path);
@@ -18,4 +20,6 @@ public interface FileSystemService {
     Folder getFolderByPath(String path);
 
     File getFileByPath(String path);
+
+    InputStream getFileContent(String path);
 }

@@ -19,12 +19,11 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void createNewFile(String name, Folder folder, String path, String url) {
+    public void createNewFile(String name, Folder folder, String path) {
         File file = File.builder()
                 .name(name)
                 .path(path)
                 .localePath(folder.getLocalePath() + name)
-                .url(url)
                 .folder(folder)
                 .build();
         fileRepository.save(file);
@@ -36,7 +35,6 @@ public class FileServiceImpl implements FileService {
         file.setName(name);
         file.setPath(updatedPath);
         file.setLocalePath(updatedPath.substring(updatedPath.indexOf("/") + 1));
-        file.setUrl(String.format("%s/%s", file.getUrl().substring(0, file.getUrl().lastIndexOf("/")), name));
         fileRepository.save(file);
     }
 
