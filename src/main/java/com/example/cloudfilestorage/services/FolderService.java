@@ -9,4 +9,6 @@ public interface FolderService {
     void createSubFolder(String name, String path);
 
     Folder getFolderByPath(String path);
+
+    void removeFolder(String path);
 }

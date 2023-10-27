@@ -174,6 +174,11 @@
             </form>
         </div>
     </div>
+    <h2>Delete folder</h2>
+    <form th:method="post" th:action="@{/remove-folder(path=${folder.getLocalePath()})}">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="Delete" class="delete-button">
+    </form>
 </div>
 
 <div class="right-content">

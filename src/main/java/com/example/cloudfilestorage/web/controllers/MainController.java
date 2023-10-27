@@ -150,10 +150,11 @@ public class MainController {
         return "redirect:/select/" + path.substring(path.indexOf("/") + 1);
     }
 
-    @PostMapping("/remove-folder")
+    @DeleteMapping("/remove-folder")
     public String removeFolder(@RequestParam("path") String path,
-                               HttpServletResponse response,
                                @AuthenticationPrincipal UserDetails userDetails) {
-
+        path = userService.getUserFolder(userDetails) + "/" + path;
+        fileSystemService.removeFolder(path);
+        return "redirect:/search/root/";
     }
 }

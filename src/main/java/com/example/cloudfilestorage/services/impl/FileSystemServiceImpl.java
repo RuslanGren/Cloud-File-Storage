@@ -129,4 +129,15 @@ public class FileSystemServiceImpl implements FileSystemService {
         }
     }
 
+    @Transactional
+    @Override
+    public void removeFolder(String path) {
+        try {
+            minioService.removeFolder(minioService.listObjects(path));
+            folderService.removeFolder(path);
+        } catch (Exception e) {
+            throw new FileDeleteException(e.getMessage());
+        }
+    }
+
 }

@@ -60,4 +60,10 @@ public class FolderServiceImpl implements FolderService {
         }
         return folder;
     }
+
+    @Override
+    public void removeFolder(String path) {
+        Folder folder = getFolderByPath(path);
+        folderRepository.delete(folder);
+    }
 }
