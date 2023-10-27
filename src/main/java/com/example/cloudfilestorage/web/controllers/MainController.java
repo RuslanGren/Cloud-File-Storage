@@ -149,4 +149,11 @@ public class MainController {
         }
         return "redirect:/select/" + path.substring(path.indexOf("/") + 1);
     }
+
+    @PostMapping("/remove-folder")
+    public String removeFolder(@RequestParam("path") String path,
+                               HttpServletResponse response,
+                               @AuthenticationPrincipal UserDetails userDetails) {
+
+    }
 }

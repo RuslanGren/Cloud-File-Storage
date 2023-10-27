@@ -1,5 +1,8 @@
 package com.example.cloudfilestorage.services;
 
+import io.minio.Result;
+import io.minio.messages.Item;
+
 import java.io.InputStream;
 
 public interface MinioService {
@@ -12,4 +15,8 @@ public interface MinioService {
     InputStream getFileContent(String path);
 
     void copyFile(String oldPath, String updatedPath);
+
+    void removeFolder(Iterable<Result<Item>> listObjects);
+
+    Iterable<Result<Item>> listObjects(String path);
 }

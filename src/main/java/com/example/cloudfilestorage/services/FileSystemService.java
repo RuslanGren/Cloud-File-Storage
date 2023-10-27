@@ -22,4 +22,6 @@ public interface FileSystemService {
     File getFileByPath(String path);
 
     InputStream getFileContent(String path);
+
+    void removeFolder(String path);
 }
