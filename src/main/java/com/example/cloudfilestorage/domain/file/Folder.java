@@ -22,9 +22,13 @@ public class Folder {
     private String path;
     private String localePath;
 
-    @OneToMany(mappedBy = "folder")
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files;
 
-    @OneToMany
+    @ManyToOne
+    @JoinColumn(name = "parent_folder_id")
+    private Folder parentFolder;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Folder> subFolders;
 }

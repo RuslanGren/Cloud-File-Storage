@@ -23,6 +23,7 @@ public class FolderServiceImpl implements FolderService {
                 .name("root")
                 .path(userFolder + "/root/")
                 .localePath("root/")
+                .parentFolder(null)
                 .build();
         folderRepository.save(folder);
     }
@@ -41,6 +42,7 @@ public class FolderServiceImpl implements FolderService {
                 .name(name)
                 .path(path + name + "/")
                 .localePath(rootFolder.getLocalePath() + name + "/")
+                .parentFolder(rootFolder)
                 .build();
 
         // save subfolder in db
@@ -64,6 +66,10 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public void removeFolder(String path) {
         Folder folder = getFolderByPath(path);
+        Folder parentFolder = folder.getParentFolder();
+        parentFolder.getSubFolders().remove(folder);
+        folderRepository.save(parentFolder);
         folderRepository.delete(folder);
     }
+
 }

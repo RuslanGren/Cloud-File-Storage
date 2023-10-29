@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Builder
@@ -22,5 +24,6 @@ public class File {
 
     @ManyToOne
     @JoinColumn(name = "folder_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Folder folder;
 }
