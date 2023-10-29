@@ -3,6 +3,7 @@ package com.example.cloudfilestorage.services.impl;
 import com.example.cloudfilestorage.services.MinioService;
 import com.example.cloudfilestorage.services.properties.MinioProperties;
 import io.minio.*;
+import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
 import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -85,14 +87,21 @@ public class MinioServiceImpl implements MinioService {
     @SneakyThrows
     @Override
     public void removeFolder(Iterable<Result<Item>> listObjects) {
+        Iterator<Result<Item>> it = listObjects.iterator();
         List<DeleteObject> objects = new LinkedList<>();
-        for (Result<Item> result : listObjects) {
-            objects.add(new DeleteObject(result.get().objectName()));
+        while (it.hasNext()) {
+            Item i = it.next().get();
+            objects.add(new DeleteObject(i.objectName()));
+            System.out.println(i.objectName());
         }
-        minioClient.removeObjects(RemoveObjectsArgs.builder()
+        Iterable<Result<DeleteError>> results = minioClient.removeObjects(RemoveObjectsArgs.builder()
                 .bucket(minioProperties.getBucket())
                 .objects(objects)
                 .build());
-
+        for (Result<DeleteError> result : results) {
+            DeleteError error = result.get();
+            System.out.println("Error in deleting object " + error.objectName() + "; " + error.message());
+        }
     }
+
 }
