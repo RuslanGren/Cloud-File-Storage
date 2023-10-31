@@ -81,6 +81,7 @@ public class MinioServiceImpl implements MinioService {
         return minioClient.listObjects(ListObjectsArgs.builder()
                 .bucket(minioProperties.getBucket())
                 .prefix(path)
+                .recursive(true)
                 .build());
     }
 
@@ -92,7 +93,6 @@ public class MinioServiceImpl implements MinioService {
         while (it.hasNext()) {
             Item i = it.next().get();
             objects.add(new DeleteObject(i.objectName()));
-            System.out.println(i.objectName());
         }
         Iterable<Result<DeleteError>> results = minioClient.removeObjects(RemoveObjectsArgs.builder()
                 .bucket(minioProperties.getBucket())
