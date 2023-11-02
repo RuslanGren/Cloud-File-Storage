@@ -1,6 +1,7 @@
 package com.example.cloudfilestorage.services.impl;
 
 import com.example.cloudfilestorage.domain.exceptions.folder.FolderCreateException;
+import com.example.cloudfilestorage.domain.exceptions.folder.FolderDeleteException;
 import com.example.cloudfilestorage.domain.exceptions.folder.FolderNotFoundException;
 import com.example.cloudfilestorage.domain.file.Folder;
 import com.example.cloudfilestorage.repository.FolderRepository;
@@ -67,6 +68,9 @@ public class FolderServiceImpl implements FolderService {
     public void removeFolder(String path) {
         Folder folder = getFolderByPath(path);
         Folder parentFolder = folder.getParentFolder();
+        if (parentFolder == null) {
+            throw new FolderDeleteException("The root folder cannot be deleted");
+        }
         parentFolder.getSubFolders().remove(folder);
         folderRepository.save(parentFolder);
         folderRepository.delete(folder);

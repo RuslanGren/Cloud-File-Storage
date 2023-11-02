@@ -2,6 +2,7 @@ package com.example.cloudfilestorage.services.impl;
 
 import com.example.cloudfilestorage.domain.exceptions.file.*;
 import com.example.cloudfilestorage.domain.exceptions.folder.FolderCreateException;
+import com.example.cloudfilestorage.domain.exceptions.folder.FolderDeleteException;
 import com.example.cloudfilestorage.domain.exceptions.folder.FolderNotFoundException;
 import com.example.cloudfilestorage.domain.file.File;
 import com.example.cloudfilestorage.domain.file.Folder;
@@ -136,7 +137,7 @@ public class FileSystemServiceImpl implements FileSystemService {
             minioService.removeFolder(minioService.listObjects(path));
             folderService.removeFolder(path);
         } catch (Exception e) {
-            throw new FileDeleteException(e.getMessage());
+            throw new FolderDeleteException(e.getMessage());
         }
     }
 
