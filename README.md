@@ -16,7 +16,7 @@ Multi-user file cloud. Users of the service can use it to download and store fil
 ## Technology stack
 - Spring Boot
 - Spring Security
-- Spring MVC + Thymeleaf + Bootstrap
+- Spring MVC + Thymeleaf
 - Spring Sessions + Redis
 - Data persistence:
   - Spring Data JPA + PostgreSQL
