@@ -34,5 +34,5 @@ git clone https://github.com/RuslanGren/Cloud-File-Storage.git
 3. Run Docker compose stack for local development (Docker have to be installed and running)
 
 ```shell
-docker compose -f compose/docker-compose.yml up
+docker compose -f docker-compose.yml up
 ```
